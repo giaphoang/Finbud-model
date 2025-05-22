@@ -43,3 +43,33 @@ class GptCommunicator:
         start_index = response.find("[")
         end_index = response.rfind("]")
         return response[start_index : end_index + 1]
+    
+class GroqCommunicator:
+    def __init__(self, groq_model: str = settings.GROQ_MODEL_ID):
+        self.api_key = settings.GROQ_API_KEY
+        self.groq_model = groq_model
+
+    def send_prompt_groq(self, prompt: str) -> list:
+        try:
+            client = Groq(api_key=self.api_key)
+            logger.info(f"Sending batch to GPT = '{settings.GROQ_MODEL_ID}'.")
+
+            chat_completion = client.chat.completions.create(
+                messages=[
+                    {"role": "user", "content": prompt[:MAX_LENGTH]},
+                ],
+                model=self.gpt_model,
+            )
+            response = chat_completion.choices[0].message.content   
+            return json.loads(self.clean_response(response))
+        except Exception:
+            logger.exception(
+                f"Skipping batch! An error occurred while communicating with API."
+            )
+
+            return []
+    
+    def clean_response(self, response: str) -> str:
+        start_index = response.find("[")
+        end_index = response.rfind("]")
+        return response[start_index : end_index + 1]

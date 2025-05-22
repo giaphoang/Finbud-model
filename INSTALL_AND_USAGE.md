@@ -130,6 +130,8 @@ After installing the dependencies into the Poetry virtual environment, you can a
 poetry shell
 ```
 
+Use this docs to check if the environment is activated https://python-poetry.org/docs/managing-environments/#bash-csh-zsh
+
 ## Set up the data infrastructure
 
 We support running the entire data infrastructure (crawling, CDC, MongoDB, and Qdrant) through Docker. Thus, with a few commands you can quickly populate the data warehouse and vector DB with relevant data to test out the RAG, training, and inference parts of the course.

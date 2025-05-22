@@ -23,6 +23,10 @@ class Settings(BaseSettings):
     OPENAI_MODEL_ID: str = "gpt-4o-mini"
     OPENAI_API_KEY: str | None = None
 
+    # Groq
+    GROQ_API_KEY: str | None = None
+    GROQ_MODEL_ID: str = "llama3-8b-8192"
+
     # MQ config
     RABBITMQ_DEFAULT_USERNAME: str = "guest"
     RABBITMQ_DEFAULT_PASSWORD: str = "guest"

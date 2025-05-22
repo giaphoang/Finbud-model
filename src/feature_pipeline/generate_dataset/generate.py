@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 
+from .llm_communication import GroqCommunicator
 # To mimic using multiple Python modules, such as 'core' and 'feature_pipeline',
 # we will add the './src' directory to the PYTHONPATH. This is not intended for
 # production use cases but for development and educational purposes.
@@ -131,6 +132,47 @@ class DatasetGenerator:
 
         self.push_to_comet(train_test_split, data_type, collection_name)
 
+    def generate_training_data_groq(
+        self, collection_name: str, data_type: str, batch_size: int = 3
+    ) -> None:
+        assert (
+            settings.COMET_API_KEY
+        ), "COMET_API_KEY must be set in settings, fill it in your .env file."
+        assert (
+            settings.COMET_WORKSPACE
+        ), "COMET_PROJECT must be set in settings, fill it in your .env file."
+        assert (
+            settings.COMET_WORKSPACE
+        ), "COMET_PROJECT must be set in settings, fill it in your .env file."
+        assert (
+            settings.GROQ_API_KEY
+        ), "GROQ_API_KEY must be set in settings, fill it in your .env file."
+
+        cleaned_documents = self.fetch_all_cleaned_content(collection_name)
+        cleaned_documents = chunk_documents(cleaned_documents)
+        num_cleaned_documents = len(cleaned_documents)
+
+        generated_instruct_dataset = []
+        for i in range(0, num_cleaned_documents, batch_size):
+            batch = cleaned_documents[i : i + batch_size]
+            prompt = data_formatter.format_prompt(batch, data_type, i)
+            batch_instructions = self.api_communicator.send_prompt_groq(prompt)
+
+            if len(batch_instructions) != len(batch):
+                logger.error(
+                    f"Received {len(batch_instructions)} instructions for {len(batch)} documents. \
+                    Skipping this batch..."
+                )
+                continue
+
+            for instruction, content in zip(batch_instructions, batch):
+                instruction["content"] = content
+                generated_instruct_dataset.append(instruction)
+
+        train_test_split = self._split_dataset(generated_instruct_dataset)
+
+        self.push_to_comet(train_test_split, data_type, collection_name)
+
     def _split_dataset(
         self, generated_instruct_dataset: list[dict], test_size: float = 0.1
     ) -> tuple[list[dict], list[dict]]:
@@ -211,7 +253,8 @@ class DatasetGenerator:
 
 if __name__ == "__main__":
     file_handler = FileHandler()
-    api_communicator = GptCommunicator()
+    # api_communicator = GptCommunicator()
+    api_communicator = GroqCommunicator()
     data_formatter = DataFormatter()
     dataset_generator = DatasetGenerator(file_handler, api_communicator, data_formatter)
 

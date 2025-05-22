@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     OPENAI_MODEL_ID: str = "gpt-4o-mini"
     OPENAI_API_KEY: str | None = None
 
+    # Groq config
+    GROQ_API_KEY: str | None = None
+    GROQ_MODEL_ID: str = "llama3-8b-8192"
+
     # QdrantDB config
     QDRANT_DATABASE_HOST: str = "localhost"  # Or 'qdrant' if running inside Docker
     QDRANT_DATABASE_PORT: int = 6333

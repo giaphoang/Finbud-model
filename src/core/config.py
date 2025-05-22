@@ -31,6 +31,10 @@ class AppSettings(BaseSettings):
     OPENAI_MODEL_ID: str = "gpt-4o-mini"
     OPENAI_API_KEY: str | None = None
 
+    # Groq config
+    GROQ_API_KEY: str | None = None
+    GROQ_MODEL_ID: str = "llama3-8b-8192"
+
     # CometML config
     COMET_API_KEY: str | None = None
     COMET_WORKSPACE: str | None = None

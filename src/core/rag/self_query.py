@@ -2,6 +2,7 @@ import opik
 from config import settings
 from langchain_openai import ChatOpenAI
 from opik.integrations.langchain import OpikTracer
+from groq import Groq
 
 import core.logger_utils as logger_utils
 from core import lib
@@ -46,3 +47,41 @@ class SelfQuery:
         user_id = UserDocument.get_or_create(first_name=first_name, last_name=last_name)
 
         return user_id
+
+    @staticmethod
+    @opik.track(name="SelQuery.generate_response_groq")
+    def generate_response_groq(query: str) -> str | None:
+        prompt = SelfQueryTemplate().create_template()
+        prompt_content = prompt.format(question=query)
+        
+        client = Groq(api_key=settings.GROQ_API_KEY)
+        response = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt_content,
+                }
+            ],
+            model=settings.GROQ_MODEL_ID,
+            temperature=0,
+        )
+        content = response.choices[0].message.content
+        user_full_name = content.strip("\n ")
+
+        if user_full_name == "none":
+            return None
+
+        logger.info(
+            f"Successfully extracted the user full name from the query.",
+            user_full_name=user_full_name,
+        )
+        first_name, last_name = lib.split_user_full_name(user_full_name)
+        logger.info(
+            f"Successfully extracted the user first and last name from the query.",
+            first_name=first_name,
+            last_name=last_name,
+        )
+        user_id = UserDocument.get_or_create(first_name=first_name, last_name=last_name)
+
+        return user_id
+                
