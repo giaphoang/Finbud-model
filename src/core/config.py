@@ -10,9 +10,9 @@ class AppSettings(BaseSettings):
 
     # MongoDB configs
     MONGO_DATABASE_HOST: str = (
-        "mongodb://mongo1:30001,mongo2:30002,mongo3:30003/?replicaSet=my-replica-set"
+        "mongodb://localhost:30001,localhost:30002,localhost:30003/?replicaSet=my-replica-set"
     )
-    MONGO_DATABASE_NAME: str = "twin"
+    MONGO_DATABASE_NAME: str = "finbud"
 
     # MQ config
     RABBITMQ_DEFAULT_USERNAME: str = "guest"
@@ -49,7 +49,7 @@ class AppSettings(BaseSettings):
     # LLM Model config
     HUGGINGFACE_ACCESS_TOKEN: str | None = None
     MODEL_ID: str = "pauliusztin/LLMTwin-Llama-3.1-8B"
-    DEPLOYMENT_ENDPOINT_NAME: str = "twin"
+    DEPLOYMENT_ENDPOINT_NAME: str = "finbud"
 
     MAX_INPUT_TOKENS: int = 1536  # Max length of input text.
     MAX_TOTAL_TOKENS: int = 2048  # Max length of the generation (including input text).
