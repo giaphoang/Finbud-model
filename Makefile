@@ -1,8 +1,5 @@
-include .env
-
-$(eval export $(shell sed -ne 's/ *#.*$$//; /./ s/=.*$$// p' .env))
-
-PYTHONPATH := $(shell pwd)/src
+# Windows-compatible way to set environment variables
+PYTHONPATH := $(CURDIR)/src
 
 install: # Create a local Poetry virtual environment and install all required Python dependencies.
 	poetry env use 3.11
@@ -18,16 +15,28 @@ help:
 local-start: # Build and start your local Docker infrastructure.
 	docker compose -f docker-compose.yml up --build -d
 
+local-start-mongo: # Start only MongoDB replica set
+	docker compose -f docker-compose.mongo.yml up -d
+
 local-stop: # Stop your local Docker infrastructure.
-	docker compose -f docker-compose.yml down --remove-orphans
+	docker compose -f docker-compose.yml down --remove-orphans2
+
+local-stop-mongo: # Stop only MongoDB replica set
+	docker compose -f docker-compose.mongo.yml down --remove-orphans
 
 # ======================================
 # ---------- Crawling Data -------------
 # ======================================
 
-local-test-medium: # Make a call to your local AWS Lambda (hosted in Docker) to crawl a Medium article.
+run-financials-crawler: # Run the financials crawler directly using Poetry
+	cd src/data_crawling && set PYTHONPATH=..\.. && poetry run python main.py
+
+run-test-crawler: # Run all crawlers test script
+	cd src/data_crawling && set PYTHONPATH=..\.. && poetry run python test_crawler.py
+
+local-test-financials: # Make a call to your local AWS Lambda (hosted in Docker) to crawl a financials.
 	curl -X POST "http://localhost:9010/2015-03-31/functions/function/invocations" \
-	  	-d '{"user": "Paul Iusztin", "link": "https://medium.com/decodingml/an-end-to-end-framework-for-production-ready-llm-systems-by-building-your-llm-twin-2cc6bb01141f"}'
+	  	-d '{"link": "financials"}'
 
 local-test-github: # Make a call to your local AWS Lambda (hosted in Docker) to crawl a Github repository.
 	curl -X POST "http://localhost:9010/2015-03-31/functions/function/invocations" \

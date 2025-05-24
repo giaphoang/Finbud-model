@@ -6,9 +6,10 @@ from pymongo import errors
 
 import core.logger_utils as logger_utils
 from core.db.mongo import connection
+from core.config import settings
 from core.errors import ImproperlyConfigured
 
-_database = connection.get_database("twin")
+_database = connection.get_database(settings.MONGO_DATABASE_NAME)
 
 logger = logger_utils.get_logger(__name__)
 
@@ -103,39 +104,42 @@ class BaseDocument(BaseModel):
 
         return cls.Settings.name
 
-
-class UserDocument(BaseDocument):
-    first_name: str
-    last_name: str
-
-    class Settings:
-        name = "users"
-
-
-class RepositoryDocument(BaseDocument):
-    name: str
-    link: str
-    content: dict
-    owner_id: str = Field(alias="owner_id")
+class FinancialsDocument(BaseDocument):
+    company_name: str
+    form_type: str
+    content: str
+    quarter: str
+    date: str
 
     class Settings:
-        name = "repositories"
+        name = "financials"
 
 
-class PostDocument(BaseDocument):
-    platform: str
-    content: dict
-    author_id: str = Field(alias="author_id")
-
+class Form4Document(BaseDocument):
+    company_name: str
+    form_type: str
+    content: str
+    quarter: str
+    date: str
     class Settings:
-        name = "posts"
+        name = "form4"
 
 
-class ArticleDocument(BaseDocument):
-    platform: str
-    link: str
-    content: dict
-    author_id: str = Field(alias="author_id")
-
+class NewsDocument(BaseDocument):
+    company_name: str
+    form_type: str
+    content: str
+    quarter: str
+    date: str
     class Settings:
-        name = "articles"
+        name = "news"
+
+
+class ProxyDocument(BaseDocument):
+    company_name: str
+    form_type: str
+    content: str
+    quarter: str
+    date: str
+    class Settings:
+        name = "proxies"
