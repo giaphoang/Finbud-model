@@ -42,7 +42,7 @@ class BaseAbstractCrawler(BaseCrawler, ABC):
     def set_extra_driver_options(self, options: Options) -> None:
         pass
 
-    def extract(self) -> None:
+    def login(self) -> None:
         pass
 
     def scroll_page(self) -> None:
