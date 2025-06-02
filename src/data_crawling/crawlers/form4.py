@@ -17,7 +17,7 @@ from crawlers.base import BaseAbstractCrawler
 
 logger = Logger(service="llm-twin-course/crawler")
 
-class FinancialsCrawler(BaseAbstractCrawler):
+class Form4Crawler(BaseAbstractCrawler):
 
     model = FinancialsDocument
 
