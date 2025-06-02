@@ -24,7 +24,7 @@ class FinancialsCrawler(BaseAbstractCrawler):
     def __init__(self):
         super().__init__()
 
-    def extract(self, link: str, **kwargs) -> None:
+    def extract(self) -> None:
         logger.info("Starting financials data extraction")
         # Direct to findata
         self.driver.get("https://finbud.pro/docs/aapl")

@@ -17,14 +17,14 @@ from crawlers.base import BaseAbstractCrawler
 
 logger = Logger(service="llm-twin-course/crawler")
 
-class FinancialsCrawler(BaseAbstractCrawler):
+class Form4Crawler(BaseAbstractCrawler):
 
     model = FinancialsDocument
 
     def __init__(self):
         super().__init__()
 
-    def extract(self, link: str, **kwargs) -> None:
+    def extract(self) -> None:
         logger.info("Starting form4 data extraction")
         # Direct to findata
         self.driver.get("https://finbud.pro/docs/aapl")

@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from typing import List, Optional
 
 from pydantic import UUID4, BaseModel, ConfigDict, Field
@@ -143,3 +144,33 @@ class ProxyDocument(BaseDocument):
     date: str
     class Settings:
         name = "proxies"
+
+
+class YahooFinanceDocument(BaseDocument):
+    source: str
+    title: str
+    link: str | None
+    summary: str | None
+    publish_date: str | None
+    class Settings:
+        name = "yahoo"
+        
+
+class BloombergDocument(BaseDocument):
+    source: str
+    title: str
+    link: str | None
+    summary: str | None
+    publish_date: str | None
+    class Settings:
+        name = "bloomberg"
+        
+
+class InvestopediaDocument(BaseDocument):
+    source: str
+    title: str
+    link: str | None
+    summary: str | None
+    publish_date: datetime | None
+    class Settings:
+        name = "investopedia"
