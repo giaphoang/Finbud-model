@@ -9,10 +9,8 @@ class AppSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=ROOT_DIR, env_file_encoding="utf-8")
 
     # MongoDB configs
-    MONGO_DATABASE_HOST: str = (
-        "mongodb://localhost:30001,localhost:30002,localhost:30003/?replicaSet=my-replica-set"
-    )
-    MONGO_DATABASE_NAME: str = "finbud"
+    MONGO_DATABASE_HOST: str = "mongodb+srv://giaptomhoang:mMmbProbiaB0bI3a@finbud-model.w2otx5f.mongodb.net/?retryWrites=true&w=majority&appName=Finbud-model"
+    MONGO_DATABASE_NAME: str = "twin"
 
     # MQ config
     RABBITMQ_DEFAULT_USERNAME: str = "guest"
@@ -62,7 +60,6 @@ class AppSettings(BaseSettings):
     EMBEDDING_MODEL_DEVICE: str = "cpu"
 
     def patch_localhost(self) -> None:
-        self.MONGO_DATABASE_HOST = "mongodb://localhost:30001,localhost:30002,localhost:30003/?replicaSet=my-replica-set"
         self.QDRANT_DATABASE_HOST = "localhost"
         self.RABBITMQ_HOST = "localhost"
 

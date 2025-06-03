@@ -28,11 +28,8 @@ local-stop-mongo: # Stop only MongoDB replica set
 # ---------- Crawling Data -------------
 # ======================================
 
-run-financials-crawler: # Run the financials crawler directly using Poetry
-	cd src/data_crawling && set PYTHONPATH=..\.. && poetry run python main.py
-
 run-test-crawler: # Run all crawlers test script
-	cd src/data_crawling && set PYTHONPATH=..\.. && poetry run python test_crawler.py
+	cd src/data_crawling && set PYTHONPATH=..\.. && poetry run python main.py
 
 local-test-financials: # Make a call to your local AWS Lambda (hosted in Docker) to crawl a financials.
 	curl -X POST "http://localhost:9010/2015-03-31/functions/function/invocations" \
