@@ -174,3 +174,12 @@ class InvestopediaDocument(BaseDocument):
     publish_date: datetime | None
     class Settings:
         name = "investopedia"
+
+class InvestopediaPersonalFinanceDocument(BaseDocument):
+    source: str
+    title: str
+    link: str | None
+    summary: str | None
+    publish_date: datetime | None
+    class Settings:
+        name = "investopedia_personal_finance"
