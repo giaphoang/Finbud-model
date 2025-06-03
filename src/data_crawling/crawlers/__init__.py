@@ -8,4 +8,4 @@ from .YahooFinance import YahooFinanceCrawler
 from .Bloomberg import BloombergCrawler
 from .Investopedia import InvestopediaCrawler
 
-__all__ = ["_10KCrawler", "_10QCrawler", "DEF14ACrawler", "Form4Crawler", "_8KCrawler", "EarningsCallTranscriptCrawler", "YahooFinanceCrawler", "BloombergCrawler"]
+__all__ = ["_10KCrawler", "_10QCrawler", "DEF14ACrawler", "Form4Crawler", "_8KCrawler", "EarningsCallTranscriptCrawler", "YahooFinanceCrawler", "BloombergCrawler", "InvestopediaCrawler"]
