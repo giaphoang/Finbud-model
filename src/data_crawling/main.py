@@ -3,7 +3,7 @@ from typing import Any
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from core import lib
-from crawlers import FinancialsCrawler, NewsCrawler, Form4Crawler, ProxyCrawler, YahooFinanceCrawler, BloombergCrawler, InvestopediaCrawler
+from crawlers import FinancialsCrawler, NewsCrawler, Form4Crawler, ProxyCrawler, YahooFinanceCrawler, BloombergCrawler, InvestopediaCrawler, InvestopediaPersonalFinanceCrawler
 from dispatcher import CrawlerDispatcher
 
 logger = Logger(service="llm-twin-course/crawler")
@@ -16,6 +16,8 @@ _dispatcher.register("proxies", ProxyCrawler)
 _dispatcher.register("yahoo", YahooFinanceCrawler)
 _dispatcher.register("bloomberg", BloombergCrawler)
 _dispatcher.register("investopedia", InvestopediaCrawler)
+_dispatcher.register("investopedia_personal_finance", InvestopediaPersonalFinanceCrawler)
+
 
 
 

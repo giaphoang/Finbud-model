@@ -5,5 +5,6 @@ from .proxies import ProxyCrawler
 from .YahooFinance import YahooFinanceCrawler
 from .Bloomberg import BloombergCrawler
 from .Investopedia import InvestopediaCrawler
+from .InvestopediaPersonalFinance import InvestopediaPersonalFinanceCrawler
 
-__all__ = ["FinancialsCrawler", "NewsCrawler", "Form4Crawler", "ProxyCrawler", "YahooFinanceCrawler", "BloombergCrawler", "InvestopediaCrawler"]
+__all__ = ["FinancialsCrawler", "NewsCrawler", "Form4Crawler", "ProxyCrawler", "YahooFinanceCrawler", "BloombergCrawler", "InvestopediaCrawler", "InvestopediaPersonalFinanceCrawler"]
