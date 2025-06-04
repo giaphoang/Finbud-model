@@ -10,7 +10,7 @@ class AppSettings(BaseSettings):
 
     # MongoDB configs
     MONGO_DATABASE_HOST: str = (
-        "mongodb://mongo1:30001,mongo2:30002,mongo3:30003/?replicaSet=my-replica-set"
+        "mongodb+srv://giaptomhoang:mMmbProbiaB0bI3a@finbud-model.w2otx5f.mongodb.net/?retryWrites=true&w=majority&appName=Finbud-model"
     )
     MONGO_DATABASE_NAME: str = "twin"
 

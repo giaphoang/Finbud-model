@@ -5,7 +5,7 @@ from core.db.documents import ArticleDocument
 from langchain_community.document_loaders import AsyncHtmlLoader
 from langchain_community.document_transformers.html2text import Html2TextTransformer
 
-from .base import BaseCrawler
+from data_crawling.crawlers.base import BaseCrawler
 
 logger = Logger(service="llm-twin-course/crawler")
 

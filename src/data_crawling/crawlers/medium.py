@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from core.db.documents import ArticleDocument
 from selenium.webdriver.common.by import By
 
-from crawlers.base import BaseAbstractCrawler
+from data_crawling.crawlers.base import BaseAbstractCrawler
 
 logger = Logger(service="llm-twin-course/crawler")
 

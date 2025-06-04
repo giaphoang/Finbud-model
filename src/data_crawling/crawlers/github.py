@@ -6,7 +6,7 @@ import tempfile
 from aws_lambda_powertools import Logger
 from core.db.documents import RepositoryDocument
 
-from crawlers.base import BaseCrawler
+from data_crawling.crawlers.base import BaseCrawler
 
 logger = Logger(service="llm-twin-course/crawler")
 
