@@ -31,3 +31,24 @@ class RepositoryChunkModel(DataModel):
     chunk_content: str
     owner_id: str
     type: str
+
+
+class EdgarFillingChunkModel(DataModel):
+    entry_id: str
+    source: str
+    url: str
+    date: str
+    ticker: str
+    chunk_id: str
+    chunk_content: str
+    type: str
+
+
+class EarningsCallTranscriptChunkModel(DataModel):
+    entry_id: str
+    source: str
+    url: str
+    date: str
+    chunk_id: str
+    chunk_content: str
+    type: str

@@ -2,8 +2,8 @@ import hashlib
 from abc import ABC, abstractmethod
 
 from models.base import DataModel
-from models.chunk import ArticleChunkModel, PostChunkModel, RepositoryChunkModel
-from models.clean import ArticleCleanedModel, PostCleanedModel, RepositoryCleanedModel
+from models.chunk import ArticleChunkModel, EdgarFillingChunkModel, EarningsCallTranscriptChunkModel, PostChunkModel, RepositoryChunkModel
+from models.clean import ArticleCleanedModel, EdgarFillingCleanedModel, EarningsCallTranscriptCleanedModel, PostCleanedModel, RepositoryCleanedModel
 from utils.chunking import chunk_text
 
 
@@ -17,6 +17,48 @@ class ChunkingDataHandler(ABC):
     def chunk(self, data_model: DataModel) -> list[DataModel]:
         pass
 
+class EdgarFillingChunkingHandler(ChunkingDataHandler):
+    def chunk(self, data_model: EdgarFillingCleanedModel) -> list[EdgarFillingChunkModel]:
+        data_models_list = []
+        
+        text_content = data_model.cleaned_content
+        chunks = chunk_text(text_content)
+        
+        for chunk in chunks:
+            model = EdgarFillingChunkModel(
+                entry_id=data_model.entry_id,
+                source=data_model.source,
+                url=data_model.url,
+                date=data_model.date,
+                ticker=data_model.ticker,
+                chunk_id=hashlib.md5(chunk.encode()).hexdigest(),
+                chunk_content=chunk,
+                type=data_model.type,
+            )
+            data_models_list.append(model)
+        
+        return data_models_list
+    
+class EarningsCallTranscriptChunkingHandler(ChunkingDataHandler):
+    def chunk(self, data_model: EarningsCallTranscriptCleanedModel) -> list[EarningsCallTranscriptChunkModel]:
+        data_models_list = []
+        
+        text_content = data_model.cleaned_content
+        chunks = chunk_text(text_content)
+        
+        for chunk in chunks:
+            model = EarningsCallTranscriptChunkModel(
+                entry_id=data_model.entry_id,
+                source=data_model.source,
+                url=data_model.url,
+                date=data_model.date,
+                chunk_id=hashlib.md5(chunk.encode()).hexdigest(),
+                chunk_content=chunk,
+                type=data_model.type,
+            )
+            data_models_list.append(model)
+        
+        return data_models_list
 
 class PostChunkingHandler(ChunkingDataHandler):
     def chunk(self, data_model: PostCleanedModel) -> list[PostChunkModel]:

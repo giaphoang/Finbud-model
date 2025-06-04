@@ -15,7 +15,7 @@ class QdrantDatabaseConnector:
             if settings.USE_QDRANT_CLOUD:
                 self._instance = QdrantClient(
                     url=settings.QDRANT_CLOUD_URL,
-                    api_key=settings.QDRANT_APIKEY,
+                    api_key=settings.QDRANT_API_KEY,
                 )
             else:
                 self._instance = QdrantClient(

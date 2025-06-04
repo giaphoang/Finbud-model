@@ -61,3 +61,46 @@ class RepositoryCleanedModel(VectorDBDataModel):
         }
 
         return self.entry_id, data
+    
+
+class EdgarFillingCleanedModel(VectorDBDataModel):
+    entry_id: str
+    source: str
+    url: str
+    date: str
+    ticker: str
+    cleaned_content: str
+    type: str
+
+    def to_payload(self) -> Tuple[str, dict]:
+        data = {
+            "entry_id": self.entry_id,
+            "source": self.source,
+            "url": self.url,
+            "date": self.date,
+            "ticker": self.ticker,
+            "cleaned_content": self.cleaned_content,
+            "type": self.type,
+        }
+
+        return self.entry_id, data
+
+class EarningsCallTranscriptCleanedModel(VectorDBDataModel):
+    entry_id: str
+    source: str
+    url: str
+    date: str
+    cleaned_content: str
+    type: str
+    
+    def to_payload(self) -> Tuple[str, dict]:
+        data = {
+            "entry_id": self.entry_id,
+            "source": self.source,
+            "url": self.url,
+            "date": self.date,
+            "cleaned_content": self.cleaned_content,
+            "type": self.type,
+        }
+
+        return self.entry_id, data

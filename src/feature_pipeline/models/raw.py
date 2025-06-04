@@ -22,3 +22,16 @@ class PostsRawModel(DataModel):
     content: dict
     author_id: str | None = None
     image: Optional[str] = None
+
+class EdgarFillingRawModel(DataModel):
+    source: str
+    url: str
+    date: str
+    ticker: str
+    content: str
+
+class EarningsCallTranscriptRawModel(DataModel):
+    source: str
+    url: str
+    date: str
+    content: str

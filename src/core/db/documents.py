@@ -105,7 +105,7 @@ class BaseDocument(BaseModel):
 
         return cls.Settings.name
 
-class   EdgarFillingDocument(BaseDocument):
+class EdgarFillingDocument(BaseDocument):
     source: str
     url: str
     date: str

@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
 
 from models.base import DataModel
-from models.chunk import ArticleChunkModel, PostChunkModel, RepositoryChunkModel
+from models.chunk import ArticleChunkModel, EdgarFillingChunkModel, EarningsCallTranscriptChunkModel, PostChunkModel, RepositoryChunkModel
 from models.embedded_chunk import (
     ArticleEmbeddedChunkModel,
+    EdgarFillingEmbeddedChunkModel,
+    EarningsCallTranscriptEmbeddedChunkModel,
     PostEmbeddedChunkModel,
     RepositoryEmbeddedChunkModel,
 )
@@ -19,6 +21,33 @@ class EmbeddingDataHandler(ABC):
     @abstractmethod
     def embedd(self, data_model: DataModel) -> DataModel:
         pass
+
+class EdgarFillingEmbeddingHandler(EmbeddingDataHandler):
+    def embedd(self, data_model: EdgarFillingChunkModel) -> EdgarFillingEmbeddedChunkModel:
+        return EdgarFillingEmbeddedChunkModel(
+            entry_id=data_model.entry_id,
+            source=data_model.source,
+            url=data_model.url,
+            date=data_model.date,
+            ticker=data_model.ticker,
+            chunk_id=data_model.chunk_id,
+            chunk_content=data_model.chunk_content,
+            embedded_content=embedd_text(data_model.chunk_content),
+            type=data_model.type,
+        )
+        
+class EarningsCallTranscriptEmbeddingHandler(EmbeddingDataHandler):
+    def embedd(self, data_model: EarningsCallTranscriptChunkModel) -> EarningsCallTranscriptEmbeddedChunkModel:
+        return EarningsCallTranscriptEmbeddedChunkModel(
+            entry_id=data_model.entry_id,
+            source=data_model.source,
+            url=data_model.url,
+            date=data_model.date,
+            chunk_id=data_model.chunk_id,
+            chunk_content=data_model.chunk_content,
+            embedded_content=embedd_text(data_model.chunk_content),
+            type=data_model.type,
+        )
 
 
 class PostEmbeddingHandler(EmbeddingDataHandler):

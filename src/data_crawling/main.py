@@ -34,6 +34,6 @@ def handler(event, context: LambdaContext | None = None) -> dict[str, Any]:
 
 if __name__ == "__main__":
     event = {
-        "link": "yahooyahoo",  # This will trigger the crawler
+        "link": "bloomberg",  # This will trigger the crawler
     }
     handler(event, None)

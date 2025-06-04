@@ -55,6 +55,9 @@ local-ingest-data: # Ingest all links from data/links.txt by calling your local 
 local-test-retriever: # Test the RAG retriever using your Poetry env
 	cd src/feature_pipeline && poetry run python -m retriever
 
+local-run-batch-processor: # Run the batch processor to migrate data from MongoDB to Qdrant Cloud
+	cd src/feature_pipeline && set PYTHONPATH=..\.. && poetry run python -m run_batch_processor
+
 local-generate-instruct-dataset: # Generate the fine-tuning instruct dataset using your Poetry env.
 	cd src/feature_pipeline && poetry run python -m generate_dataset.generate
 

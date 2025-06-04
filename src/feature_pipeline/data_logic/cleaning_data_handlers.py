@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 from models.base import DataModel
-from models.clean import ArticleCleanedModel, PostCleanedModel, RepositoryCleanedModel
-from models.raw import ArticleRawModel, PostsRawModel, RepositoryRawModel
+from models.clean import ArticleCleanedModel, EdgarFillingCleanedModel, EarningsCallTranscriptCleanedModel, PostCleanedModel, RepositoryCleanedModel
+from models.raw import ArticleRawModel, EdgarFillingRawModel, EarningsCallTranscriptRawModel, PostsRawModel, RepositoryRawModel
 from utils.cleaning import clean_text
 
 
@@ -16,7 +16,30 @@ class CleaningDataHandler(ABC):
     def clean(self, data_model: DataModel) -> DataModel:
         pass
 
+class EdgarFillingCleaningHandler(CleaningDataHandler):
+    def clean(self, data_model: EdgarFillingRawModel) -> EdgarFillingCleanedModel:
+        return EdgarFillingCleanedModel(
+            entry_id=data_model.entry_id,
+            source=data_model.source,
+            url=data_model.url,
+            date=data_model.date,
+            ticker=data_model.ticker,
+            cleaned_content=clean_text(data_model.content),
+            type=data_model.type,
+        )
 
+
+class EarningsCallTranscriptCleaningHandler(CleaningDataHandler):
+    def clean(self, data_model: EarningsCallTranscriptRawModel) -> EarningsCallTranscriptCleanedModel:
+        return EarningsCallTranscriptCleanedModel(
+            entry_id=data_model.entry_id,
+            source=data_model.source,
+            url=data_model.url,
+            date=data_model.date,
+            cleaned_content=clean_text(data_model.content),
+            type=data_model.type,
+        )
+        
 class PostCleaningHandler(CleaningDataHandler):
     def clean(self, data_model: PostsRawModel) -> PostCleanedModel:
         joined_text = (

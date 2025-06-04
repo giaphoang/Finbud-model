@@ -1,21 +1,27 @@
 from core import get_logger
 from models.base import DataModel
-from models.raw import ArticleRawModel, PostsRawModel, RepositoryRawModel
+from models.raw import ArticleRawModel, EdgarFillingRawModel, EarningsCallTranscriptRawModel, PostsRawModel, RepositoryRawModel
 
 from data_logic.chunking_data_handlers import (
     ArticleChunkingHandler,
     ChunkingDataHandler,
+    EdgarFillingChunkingHandler,
+    EarningsCallTranscriptChunkingHandler,
     PostChunkingHandler,
     RepositoryChunkingHandler,
 )
 from data_logic.cleaning_data_handlers import (
     ArticleCleaningHandler,
     CleaningDataHandler,
+    EdgarFillingCleaningHandler,
+    EarningsCallTranscriptCleaningHandler,
     PostCleaningHandler,
     RepositoryCleaningHandler,
 )
 from data_logic.embedding_data_handlers import (
     ArticleEmbeddingHandler,
+    EdgarFillingEmbeddingHandler,
+    EarningsCallTranscriptEmbeddingHandler,
     EmbeddingDataHandler,
     PostEmbeddingHandler,
     RepositoryEmbeddingHandler,
@@ -37,6 +43,10 @@ class RawDispatcher:
             return ArticleRawModel(**message)
         elif data_type == "repositories":
             return RepositoryRawModel(**message)
+        elif data_type == "edgar_filling":
+            return EdgarFillingRawModel(**message)
+        elif data_type == "earnings_call_transcript":
+            return EarningsCallTranscriptRawModel(**message)
         else:
             raise ValueError("Unsupported data type")
 
@@ -50,6 +60,10 @@ class CleaningHandlerFactory:
             return ArticleCleaningHandler()
         elif data_type == "repositories":
             return RepositoryCleaningHandler()
+        elif data_type == "edgar_filling":
+            return EdgarFillingCleaningHandler()
+        elif data_type == "earnings_call_transcript":
+            return EarningsCallTranscriptCleaningHandler()
         else:
             raise ValueError("Unsupported data type")
 
@@ -81,6 +95,10 @@ class ChunkingHandlerFactory:
             return ArticleChunkingHandler()
         elif data_type == "repositories":
             return RepositoryChunkingHandler()
+        elif data_type == "edgar_filling":
+            return EdgarFillingChunkingHandler()
+        elif data_type == "earnings_call_transcript":
+            return EarningsCallTranscriptChunkingHandler()
         else:
             raise ValueError("Unsupported data type")
 

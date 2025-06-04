@@ -6,7 +6,6 @@ from aws_lambda_powertools import Logger
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 from config import settings
-from core.db.documents import FinancialsDocument
 from core.errors import ImproperlyConfigured
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
