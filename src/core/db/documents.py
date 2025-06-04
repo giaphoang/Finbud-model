@@ -104,49 +104,87 @@ class BaseDocument(BaseModel):
 
         return cls.Settings.name
 
-    @classmethod
-    def get_collection(cls):
-        """Returns the PyMongo collection object for this document type."""
-        return _database[cls._get_collection_name()]
 
-
-class UserDocument(BaseDocument):
-    first_name: str
-    last_name: str
+class FinancialsDocument(BaseDocument):
+    company_name: str
+    form_type: str
+    content: str
+    quarter: str
+    date: str
 
     class Settings:
-        name = "users"
+        name = "financials"
 
 
-class RepositoryDocument(BaseDocument):
-    name: str
-    link: str
-    content: dict
-    owner_id: str = Field(alias="owner_id")
-
+class Form4Document(BaseDocument):
+    company_name: str
+    form_type: str
+    content: str
+    quarter: str
+    date: str
     class Settings:
-        name = "repositories"
+        name = "form4"
 
 
-class PostDocument(BaseDocument):
-    platform: str
-    content: dict
-    author_id: str = Field(alias="author_id")
-
+class NewsDocument(BaseDocument):
+    company_name: str
+    form_type: str
+    content: str
+    quarter: str
+    date: str
     class Settings:
-        name = "posts"
+        name = "news"
 
 
-class ArticleDocument(BaseDocument):
-    platform: str
-    link: str
-    content: dict
-    author_id: str = Field(alias="author_id")
-
+class ProxyDocument(BaseDocument):
+    company_name: str
+    form_type: str
+    content: str
+    quarter: str
+    date: str
     class Settings:
-        name = "articles"
+        name = "proxies"
 
-# Investopedia Document
+
+class YahooFinanceDocument(BaseDocument):
+    source: str
+    title: str
+    link: str | None
+    summary: str | None
+    publish_date: str | None
+    class Settings:
+        name = "yahoo"
+        
+
+class BloombergDocument(BaseDocument):
+    source: str
+    title: str
+    link: str | None
+    summary: str | None
+    publish_date: str | None
+    class Settings:
+        name = "bloomberg"
+        
+
+class InvestopediaDocument(BaseDocument):
+    source: str
+    title: str
+    link: str | None
+    summary: str | None
+    publish_date: datetime | None
+    class Settings:
+        name = "investopedia"
+
+class InvestopediaPersonalFinanceDocument(BaseDocument):
+    source: str
+    title: str
+    link: str | None
+    summary: str | None
+    publish_date: datetime | None
+    class Settings:
+        name = "investopedia_personal_finance"
+
+# Investopedia Financial Terms Document
 
 class Section(BaseModel):
     heading: str
@@ -180,7 +218,7 @@ class MacroEconomicReportDocument(BaseDocument):
     date: datetime
     type: str
     content: Content
-    metadata: str
+    metadata: Metadata
     crawled_at: datetime = Field(default_factory=datetime.utcnow)
 
     class Settings:

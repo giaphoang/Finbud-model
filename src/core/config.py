@@ -12,7 +12,7 @@ class AppSettings(BaseSettings):
     MONGO_DATABASE_HOST: str = (
         "mongodb+srv://giaptomhoang:mMmbProbiaB0bI3a@finbud-model.w2otx5f.mongodb.net/?retryWrites=true&w=majority&appName=Finbud-model"
     )
-    MONGO_DATABASE_NAME: str = "twin"
+    MONGO_DATABASE_NAME: str = "finbud"
 
     # MQ config
     RABBITMQ_DEFAULT_USERNAME: str = "guest"
@@ -49,7 +49,7 @@ class AppSettings(BaseSettings):
     # LLM Model config
     HUGGINGFACE_ACCESS_TOKEN: str | None = None
     MODEL_ID: str = "pauliusztin/LLMTwin-Llama-3.1-8B"
-    DEPLOYMENT_ENDPOINT_NAME: str = "twin"
+    DEPLOYMENT_ENDPOINT_NAME: str = "finbud"
 
     MAX_INPUT_TOKENS: int = 1536  # Max length of input text.
     MAX_TOTAL_TOKENS: int = 2048  # Max length of the generation (including input text).
