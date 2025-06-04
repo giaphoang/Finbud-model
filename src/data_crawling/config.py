@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     MONGO_DATABASE_HOST: str = (
         "mongodb+srv://giaptomhoang:mMmbProbiaB0bI3a@finbud-model.w2otx5f.mongodb.net/?retryWrites=true&w=majority&appName=Finbud-model"
     )
-    MONGO_DATABASE_NAME: str = "financial_consulting"
+    MONGO_DATABASE_NAME: str = "twin"
 
     # Optional LinkedIn credentials for scraping your profile
     LINKEDIN_USERNAME: str | None = None

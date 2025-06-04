@@ -104,47 +104,50 @@ class BaseDocument(BaseModel):
 
         return cls.Settings.name
 
-
 class FinancialsDocument(BaseDocument):
     company_name: str
     form_type: str
     content: str
-    quarter: str
-    date: str
 
     class Settings:
-        name = "financials"
+        name = "edgar_fillings"
 
-
-class Form4Document(BaseDocument):
-    company_name: str
-    form_type: str
+class EdgarFillingDocument(BaseDocument):
+    source: str
+    url: str
+    date: str
+    ticker: str
     content: str
-    quarter: str
-    date: str
+
     class Settings:
-        name = "form4"
+        name = "edgar_fillings"
 
-
-class NewsDocument(BaseDocument):
-    company_name: str
-    form_type: str
+class EarningsCallTranscriptDocument(BaseDocument):
+    source: str
+    url: str
+    date: str
     content: str
-    quarter: str
-    date: str
+    
     class Settings:
-        name = "news"
-
-
-class ProxyDocument(BaseDocument):
-    company_name: str
-    form_type: str
-    content: str
-    quarter: str
-    date: str
+        name = "earnings_call_transcripts"
+        
+class YahooFinanceDocument(BaseDocument):
+    source: str
+    title: str
+    link: str | None
+    summary: str | None
+    publish_date: str | None
     class Settings:
-        name = "proxies"
-
+        name = "yahoo"
+        
+class InvestopediaDocument(BaseDocument):
+    source: str
+    title: str
+    link: str | None
+    summary: str | None
+    publish_date: datetime | None
+    class Settings:
+        name = "investopedia"
 
 class YahooFinanceDocument(BaseDocument):
     source: str
@@ -165,15 +168,6 @@ class BloombergDocument(BaseDocument):
     class Settings:
         name = "bloomberg"
         
-
-class InvestopediaDocument(BaseDocument):
-    source: str
-    title: str
-    link: str | None
-    summary: str | None
-    publish_date: datetime | None
-    class Settings:
-        name = "investopedia"
 
 class InvestopediaPersonalFinanceDocument(BaseDocument):
     source: str

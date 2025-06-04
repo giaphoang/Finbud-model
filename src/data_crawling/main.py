@@ -3,21 +3,33 @@ from typing import Any
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from core import lib
+<<<<<<< HEAD
+from crawlers import _10KCrawler, _10QCrawler, DEF14ACrawler, Form4Crawler, _8KCrawler, EarningsCallTranscriptCrawler, YahooFinanceCrawler, BloombergCrawler
+=======
 from crawlers import FinancialsCrawler, NewsCrawler, Form4Crawler, ProxyCrawler, YahooFinanceCrawler, BloombergCrawler, InvestopediaCrawler, InvestopediaPersonalFinanceCrawler
+>>>>>>> main
 from dispatcher import CrawlerDispatcher
 
 logger = Logger(service="llm-twin-course/crawler")
 
 _dispatcher = CrawlerDispatcher()
-_dispatcher.register("financials", FinancialsCrawler)
-_dispatcher.register("news", NewsCrawler)
+_dispatcher.register("10k", _10KCrawler)
+_dispatcher.register("10q", _10QCrawler)
+_dispatcher.register("def14a", DEF14ACrawler)
 _dispatcher.register("form4", Form4Crawler)
+<<<<<<< HEAD
+_dispatcher.register("8k", _8KCrawler)
+_dispatcher.register("earnings_call_transcript", EarningsCallTranscriptCrawler)
+_dispatcher.register("yahoo", YahooFinanceCrawler)
+_dispatcher.register("bloomberg", BloombergCrawler)
+=======
 _dispatcher.register("proxies", ProxyCrawler)
 _dispatcher.register("yahoo", YahooFinanceCrawler)
 _dispatcher.register("bloomberg", BloombergCrawler)
 _dispatcher.register("investopedia", InvestopediaCrawler)
 _dispatcher.register("investopedia_personal_finance", InvestopediaPersonalFinanceCrawler)
 
+>>>>>>> main
 
 
 
@@ -35,6 +47,6 @@ def handler(event, context: LambdaContext | None = None) -> dict[str, Any]:
 
 if __name__ == "__main__":
     event = {
-        "link": "financials",  # This will trigger the financials crawler
+        "link": "yahooyahoo",  # This will trigger the crawler
     }
     handler(event, None)
