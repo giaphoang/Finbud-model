@@ -1,20 +1,20 @@
 
 from .financials import FinancialsCrawler
 from .news import NewsCrawler
-from .form4 import Form4Crawler
-from .proxies import ProxyCrawler
-from .YahooFinance import YahooFinanceCrawler
-from .Bloomberg import BloombergCrawler
+from .edgar_fillings.form4 import Form4Crawler
+from .edgar_fillings.proxies import ProxyCrawler
+from .financial_news.YahooFinance import YahooFinanceCrawler
+from .financial_news.Bloomberg import BloombergCrawler
 from .Investopedia import InvestopediaCrawler
-from .InvestopediaPersonalFinance import InvestopediaPersonalFinanceCrawler
-from data_crawling.crawlers.fomc_economic import FOMCEconomicCrawler
-from data_crawling.crawlers.beige_economic import BEIGEconomicCrawler
-from data_crawling.crawlers.investopedia_terms import InvestopediaTermsCrawler
-from ._10k import _10KCrawler
-from ._10q import _10QCrawler
-from .DEF14A import DEF14ACrawler
-from .form4 import Form4Crawler
-from ._8k import _8KCrawler
+from .financial_news.InvestopediaPersonalFinance import InvestopediaPersonalFinanceCrawler
+from data_crawling.crawlers.economic_reports.fomc_economic import FOMCEconomicCrawler
+from data_crawling.crawlers.economic_reports.beige_economic import BEIGEconomicCrawler
+from data_crawling.crawlers.glossaries_faqs.investopedia_terms import InvestopediaTermsCrawler
+from .edgar_fillings._10k import _10KCrawler
+from .edgar_fillings._10q import _10QCrawler
+from .edgar_fillings.DEF14A import DEF14ACrawler
+from .edgar_fillings.form4 import Form4Crawler
+from .edgar_fillings._8k import _8KCrawler
 
 __all__ = ["FinancialsCrawler", "NewsCrawler", "ProxyCrawler", "BloombergCrawler", "InvestopediaCrawler", "InvestopediaPersonalFinanceCrawler", "FOMCEconomicCrawler",
     "BEIGEconomicCrawler", "InvestopediaTermsCrawler", "_10KCrawler", "_10QCrawler", "DEF14ACrawler", "Form4Crawler", "_8KCrawler", "EarningsCallTranscriptCrawler", "YahooFinanceCrawler"]

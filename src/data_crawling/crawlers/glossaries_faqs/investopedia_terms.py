@@ -8,7 +8,7 @@ from core.db.documents import InvestopediaDocument
 from langchain_community.document_loaders import AsyncHtmlLoader
 from langchain_community.document_transformers.html2text import Html2TextTransformer
 
-from .base import BaseCrawler
+from ..base import BaseCrawler
 
 logger = Logger(service="llm-twin-course/crawler")
 
