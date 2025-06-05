@@ -22,3 +22,24 @@ class PostsRawModel(DataModel):
     content: dict
     author_id: str | None = None
     image: Optional[str] = None
+
+class YahooRawModel(DataModel):
+    platform: str
+    link: str
+    content: dict
+    author_id: str
+
+
+class BloombergRawModel(DataModel):
+    platform: str
+    link: str
+    content: dict
+    author_id: str
+
+
+class InvestopediaPersonalFinanceRawModel(DataModel):
+    platform: str
+    link: str
+    content: dict
+    author_id: str
+

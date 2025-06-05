@@ -139,15 +139,6 @@ class YahooFinanceDocument(BaseDocument):
     publish_date: str | None
     class Settings:
         name = "yahoo"
-
-class YahooFinanceDocument(BaseDocument):
-    source: str
-    title: str
-    link: str | None
-    summary: str | None
-    publish_date: str | None
-    class Settings:
-        name = "yahoo"
         
 
 class BloombergDocument(BaseDocument):

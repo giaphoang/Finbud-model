@@ -1,11 +1,14 @@
 from abc import ABC, abstractmethod
 
 from models.base import DataModel
-from models.chunk import ArticleChunkModel, PostChunkModel, RepositoryChunkModel
+from models.chunk import ArticleChunkModel, PostChunkModel, RepositoryChunkModel, YahooChunkModel, BloombergChunkModel, InvestopediaPersonalFinanceChunkModel
 from models.embedded_chunk import (
     ArticleEmbeddedChunkModel,
     PostEmbeddedChunkModel,
     RepositoryEmbeddedChunkModel,
+    YahooEmbeddedChunkModel,
+    BloombergEmbeddedChunkModel,
+    InvestopediaPersonalFinanceEmbeddedChunkModel
 )
 from utils.embeddings import embedd_text
 
@@ -58,5 +61,46 @@ class RepositoryEmbeddingHandler(EmbeddingDataHandler):
             chunk_content=data_model.chunk_content,
             embedded_content=embedd_text(data_model.chunk_content),
             owner_id=data_model.owner_id,
+            type=data_model.type,
+        )
+
+
+class YahooEmbeddingHandler(EmbeddingDataHandler):
+    def embedd(self, data_model: YahooChunkModel) -> YahooEmbeddedChunkModel:
+        return YahooEmbeddedChunkModel(
+            entry_id=data_model.entry_id,
+            platform=data_model.platform,
+            link=data_model.link,
+            chunk_content=data_model.chunk_content,
+            chunk_id=data_model.chunk_id,
+            embedded_content=embedd_text(data_model.chunk_content),
+            author_id=data_model.author_id,
+            type=data_model.type,
+        )
+
+
+class BloombergEmbeddingHandler(EmbeddingDataHandler):
+    def embedd(self, data_model: BloombergChunkModel) -> BloombergEmbeddedChunkModel:
+        return BloombergEmbeddedChunkModel(
+            entry_id=data_model.entry_id,
+            platform=data_model.platform,
+            link=data_model.link,
+            chunk_content=data_model.chunk_content,
+            chunk_id=data_model.chunk_id,
+            embedded_content=embedd_text(data_model.chunk_content),
+            author_id=data_model.author_id,
+            type=data_model.type,
+        )
+
+class InvestopediaPersonalFinanceEmbeddingHandler(EmbeddingDataHandler):
+    def embedd(self, data_model: InvestopediaPersonalFinanceChunkModel) -> InvestopediaPersonalFinanceEmbeddedChunkModel:
+        return InvestopediaPersonalFinanceEmbeddedChunkModel(
+            entry_id=data_model.entry_id,
+            platform=data_model.platform,
+            link=data_model.link,
+            chunk_content=data_model.chunk_content,
+            chunk_id=data_model.chunk_id,
+            embedded_content=embedd_text(data_model.chunk_content),
+            author_id=data_model.author_id,
             type=data_model.type,
         )

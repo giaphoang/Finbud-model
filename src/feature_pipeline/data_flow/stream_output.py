@@ -21,9 +21,15 @@ class QdrantOutput(DynamicSink):
             "cleaned_posts": False,
             "cleaned_articles": False,
             "cleaned_repositories": False,
+            "cleaned_yahoo": False,
+            "cleaned_bloomberg": False,
+            "cleaned_investopedia_personal_finance": False,
             "vector_posts": True,
             "vector_articles": True,
             "vector_repositories": True,
+            "vector_yahoo": True,
+            "vector_bloomberg": True,
+            "vector_investopedia_personal_finance": True,
         }
 
         for collection_name, is_vector in collections.items():
@@ -100,6 +106,12 @@ def get_clean_collection(data_type: str) -> str:
         return "cleaned_articles"
     elif data_type == "repositories":
         return "cleaned_repositories"
+    elif data_type == "yahoo":
+        return "cleaned_yahoo"
+    elif data_type == "bloomberg":
+        return "cleaned_bloomberg"
+    elif data_type == "investopedia_personal_finance":
+        return "cleaned_investopedia_personal_finance"
     else:
         raise ValueError(f"Unsupported data type: {data_type}")
 
@@ -111,5 +123,11 @@ def get_vector_collection(data_type: str) -> str:
         return "vector_articles"
     elif data_type == "repositories":
         return "vector_repositories"
+    elif data_type == "yahoo":
+        return "vector_yahoo"
+    elif data_type == "bloomberg":
+        return "vector_bloomberg"
+    elif data_type == "investopedia_personal_finance":
+        return "vector_investopedia_personal_finance"
     else:
         raise ValueError(f"Unsupported data type: {data_type}")

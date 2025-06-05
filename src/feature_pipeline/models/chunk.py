@@ -31,3 +31,33 @@ class RepositoryChunkModel(DataModel):
     chunk_content: str
     owner_id: str
     type: str
+    
+
+class YahooChunkModel(DataModel):
+    entry_id: str
+    platform: str
+    link: str
+    chunk_id: str
+    chunk_content: str
+    author_id: str
+    type: str
+
+
+class BloombergChunkModel(DataModel):
+    entry_id: str
+    platform: str
+    link: str
+    chunk_id: str
+    chunk_content: str
+    author_id: str
+    type: str
+
+
+class InvestopediaPersonalFinanceChunkModel(DataModel):
+    entry_id: str
+    platform: str
+    link: str
+    chunk_id: str
+    chunk_content: str
+    author_id: str
+    type: str
