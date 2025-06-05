@@ -1,30 +1,46 @@
 from core import get_logger
 from models.base import DataModel
-from models.raw import ArticleRawModel, EdgarFillingRawModel, EarningsCallTranscriptRawModel, PostsRawModel, RepositoryRawModel
+from models.raw import (
+    EdgarFillingRawModel,
+    EarningsCallTranscriptRawModel,
+    YahooFinanceRawModel,
+    BloombergRawModel,
+    InvestopediaPersonalFinanceRawModel,
+    InvestopediaTermsRawModel,
+    MacroEconomicReportRawModel
+)
 
 from data_logic.chunking_data_handlers import (
-    ArticleChunkingHandler,
     ChunkingDataHandler,
     EdgarFillingChunkingHandler,
     EarningsCallTranscriptChunkingHandler,
-    PostChunkingHandler,
-    RepositoryChunkingHandler,
+    YahooFinanceChunkingHandler,
+    BloombergChunkingHandler,
+    InvestopediaPersonalFinanceChunkingHandler,
+    InvestopediaTermsChunkingHandler,
+    MacroEconomicReportChunkingHandler
 )
+
 from data_logic.cleaning_data_handlers import (
-    ArticleCleaningHandler,
     CleaningDataHandler,
     EdgarFillingCleaningHandler,
     EarningsCallTranscriptCleaningHandler,
-    PostCleaningHandler,
-    RepositoryCleaningHandler,
+    YahooFinanceCleaningHandler,
+    BloombergCleaningHandler,
+    InvestopediaPersonalFinanceCleaningHandler,
+    InvestopediaTermsCleaningHandler,
+    MacroEconomicReportCleaningHandler
 )
+
 from data_logic.embedding_data_handlers import (
-    ArticleEmbeddingHandler,
+    EmbeddingDataHandler,
     EdgarFillingEmbeddingHandler,
     EarningsCallTranscriptEmbeddingHandler,
-    EmbeddingDataHandler,
-    PostEmbeddingHandler,
-    RepositoryEmbeddingHandler,
+    YahooFinanceEmbeddingHandler,
+    BloombergEmbeddingHandler,
+    InvestopediaPersonalFinanceEmbeddingHandler,
+    InvestopediaTermsEmbeddingHandler,
+    MacroEconomicReportEmbeddingHandler
 )
 
 logger = get_logger(__name__)
@@ -37,16 +53,20 @@ class RawDispatcher:
 
         logger.info("Received message.", data_type=data_type)
 
-        if data_type == "posts":
-            return PostsRawModel(**message)
-        elif data_type == "articles":
-            return ArticleRawModel(**message)
-        elif data_type == "repositories":
-            return RepositoryRawModel(**message)
-        elif data_type == "edgar_filling":
+        if data_type == "edgar_fillings":
             return EdgarFillingRawModel(**message)
         elif data_type == "earnings_call_transcript":
             return EarningsCallTranscriptRawModel(**message)
+        elif data_type == "yahoo":
+            return YahooFinanceRawModel(**message)
+        elif data_type == "bloomberg":
+            return BloombergRawModel(**message)
+        elif data_type == "investopedia_personal_finance":
+            return InvestopediaPersonalFinanceRawModel(**message)
+        elif data_type == "investopedia_terms":
+            return InvestopediaTermsRawModel(**message)
+        elif data_type == "macro_economic_reports":
+            return MacroEconomicReportRawModel(**message)
         else:
             raise ValueError("Unsupported data type")
 
@@ -54,16 +74,20 @@ class RawDispatcher:
 class CleaningHandlerFactory:
     @staticmethod
     def create_handler(data_type) -> CleaningDataHandler:
-        if data_type == "posts":
-            return PostCleaningHandler()
-        elif data_type == "articles":
-            return ArticleCleaningHandler()
-        elif data_type == "repositories":
-            return RepositoryCleaningHandler()
-        elif data_type == "edgar_filling":
+        if data_type == "edgar_fillings":
             return EdgarFillingCleaningHandler()
         elif data_type == "earnings_call_transcript":
             return EarningsCallTranscriptCleaningHandler()
+        elif data_type == "yahoo":
+            return YahooFinanceCleaningHandler()
+        elif data_type == "bloomberg":
+            return BloombergCleaningHandler()
+        elif data_type == "investopedia_personal_finance":
+            return InvestopediaPersonalFinanceCleaningHandler()
+        elif data_type == "investopedia_terms":
+            return InvestopediaTermsCleaningHandler()
+        elif data_type == "macro_economic_reports":
+            return MacroEconomicReportCleaningHandler()
         else:
             raise ValueError("Unsupported data type")
 
@@ -89,27 +113,31 @@ class CleaningDispatcher:
 class ChunkingHandlerFactory:
     @staticmethod
     def create_handler(data_type) -> ChunkingDataHandler:
-        if data_type == "posts":
-            return PostChunkingHandler()
-        elif data_type == "articles":
-            return ArticleChunkingHandler()
-        elif data_type == "repositories":
-            return RepositoryChunkingHandler()
-        elif data_type == "edgar_filling":
+        if data_type == "edgar_fillings":
             return EdgarFillingChunkingHandler()
         elif data_type == "earnings_call_transcript":
             return EarningsCallTranscriptChunkingHandler()
+        elif data_type == "yahoo":
+            return YahooFinanceChunkingHandler()
+        elif data_type == "bloomberg":
+            return BloombergChunkingHandler()
+        elif data_type == "investopedia_personal_finance":
+            return InvestopediaPersonalFinanceChunkingHandler()
+        elif data_type == "investopedia_terms":
+            return InvestopediaTermsChunkingHandler()
+        elif data_type == "macro_economic_reports":
+            return MacroEconomicReportChunkingHandler()
         else:
             raise ValueError("Unsupported data type")
 
 
 class ChunkingDispatcher:
-    cleaning_factory = ChunkingHandlerFactory
+    chunking_factory = ChunkingHandlerFactory()
 
     @classmethod
     def dispatch_chunker(cls, data_model: DataModel) -> list[DataModel]:
         data_type = data_model.type
-        handler = cls.cleaning_factory.create_handler(data_type)
+        handler = cls.chunking_factory.create_handler(data_type)
         chunk_models = handler.chunk(data_model)
 
         logger.info(
@@ -124,23 +152,31 @@ class ChunkingDispatcher:
 class EmbeddingHandlerFactory:
     @staticmethod
     def create_handler(data_type) -> EmbeddingDataHandler:
-        if data_type == "posts":
-            return PostEmbeddingHandler()
-        elif data_type == "articles":
-            return ArticleEmbeddingHandler()
-        elif data_type == "repositories":
-            return RepositoryEmbeddingHandler()
+        if data_type == "edgar_fillings":
+            return EdgarFillingEmbeddingHandler()
+        elif data_type == "earnings_call_transcript":
+            return EarningsCallTranscriptEmbeddingHandler()
+        elif data_type == "yahoo":
+            return YahooFinanceEmbeddingHandler()
+        elif data_type == "bloomberg":
+            return BloombergEmbeddingHandler()
+        elif data_type == "investopedia_personal_finance":
+            return InvestopediaPersonalFinanceEmbeddingHandler()
+        elif data_type == "investopedia_terms":
+            return InvestopediaTermsEmbeddingHandler()
+        elif data_type == "macro_economic_reports":
+            return MacroEconomicReportEmbeddingHandler()
         else:
             raise ValueError("Unsupported data type")
 
 
 class EmbeddingDispatcher:
-    cleaning_factory = EmbeddingHandlerFactory
+    embedding_factory = EmbeddingHandlerFactory()
 
     @classmethod
     def dispatch_embedder(cls, data_model: DataModel) -> DataModel:
         data_type = data_model.type
-        handler = cls.cleaning_factory.create_handler(data_type)
+        handler = cls.embedding_factory.create_handler(data_type)
         embedded_chunk_model = handler.embedd(data_model)
 
         logger.info(

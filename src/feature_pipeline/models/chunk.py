@@ -1,37 +1,8 @@
-from typing import Optional
+from typing import Optional, List
+from datetime import datetime
+from pydantic import BaseModel, Field
 
 from models.base import DataModel
-
-
-class PostChunkModel(DataModel):
-    entry_id: str
-    platform: str
-    chunk_id: str
-    chunk_content: str
-    author_id: str
-    image: Optional[str] = None
-    type: str
-
-
-class ArticleChunkModel(DataModel):
-    entry_id: str
-    platform: str
-    link: str
-    chunk_id: str
-    chunk_content: str
-    author_id: str
-    type: str
-
-
-class RepositoryChunkModel(DataModel):
-    entry_id: str
-    name: str
-    link: str
-    chunk_id: str
-    chunk_content: str
-    owner_id: str
-    type: str
-
 
 class EdgarFillingChunkModel(DataModel):
     entry_id: str
@@ -41,7 +12,6 @@ class EdgarFillingChunkModel(DataModel):
     ticker: str
     chunk_id: str
     chunk_content: str
-    type: str
 
 
 class EarningsCallTranscriptChunkModel(DataModel):
@@ -51,4 +21,72 @@ class EarningsCallTranscriptChunkModel(DataModel):
     date: str
     chunk_id: str
     chunk_content: str
-    type: str
+
+
+class YahooFinanceChunkModel(DataModel):
+    source: str
+    entry_id: str
+    title: str
+    link: Optional[str]
+    chunk_id: str
+    chunk_content: str
+    publish_date: Optional[str]
+
+
+class BloombergChunkModel(DataModel):
+    source: str
+    entry_id: str
+    title: str
+    link: Optional[str]
+    chunk_id: str
+    chunk_content: str
+    publish_date: Optional[str]
+
+
+class InvestopediaPersonalFinanceChunkModel(DataModel):
+    source: str
+    entry_id: str
+    title: str
+    link: Optional[str]
+    chunk_id: str
+    chunk_content: str
+    publish_date: Optional[datetime]
+
+
+class Section(BaseModel):
+    heading: str
+    text: Optional[str] = None
+    list: Optional[List[str]] = None
+
+
+class Content(BaseModel):
+    title: str
+    sections: List[Section]
+
+
+class Metadata(BaseModel):
+    source: str
+    author: Optional[str] = None
+    last_updated: Optional[str] = None
+    platform: str
+    tags: Optional[List[str]] = None
+
+
+class InvestopediaTermsChunkModel(DataModel):
+    entry_id: str
+    term: str
+    url: str
+    definition: str
+    chunk_id: str
+    chunk_content: str
+    metadata: Metadata
+    crawled_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class MacroEconomicReportChunkModel(DataModel):
+    entry_id: str
+    date: datetime
+    chunk_id: str
+    chunk_content: str
+    metadata: Metadata
+    crawled_at: datetime = Field(default_factory=datetime.utcnow)

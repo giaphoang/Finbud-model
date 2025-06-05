@@ -7,10 +7,9 @@ from pymongo import errors
 
 import core.logger_utils as logger_utils
 from core.db.mongo import connection
-from core.config import settings
 from core.errors import ImproperlyConfigured
 
-_database = connection.get_database(settings.MONGO_DATABASE_NAME)
+_database = connection.get_database("twin")
 
 logger = logger_utils.get_logger(__name__)
 
@@ -133,7 +132,6 @@ class YahooFinanceDocument(BaseDocument):
     class Settings:
         name = "yahoo"
         
-
 class BloombergDocument(BaseDocument):
     source: str
     title: str
@@ -143,11 +141,54 @@ class BloombergDocument(BaseDocument):
     class Settings:
         name = "bloomberg"
         
-class InvestopediaDocument(BaseDocument):
+
+class InvestopediaPersonalFinanceDocument(BaseDocument):
     source: str
     title: str
     link: str | None
     summary: str | None
     publish_date: datetime | None
     class Settings:
+        name = "investopedia_personal_finance"
+
+# Investopedia Financial Terms Document
+
+class Section(BaseModel):
+    heading: str
+    text: Optional[str] = None
+    list: Optional[List[str]] = None
+
+class Content(BaseModel):
+    title: str
+    sections: List[Section]
+
+class Metadata(BaseModel):
+    source: str
+    author: Optional[str] = None
+    last_updated: Optional[str] = None  # Consider using datetime if the format is consistent
+    platform: str
+    tags: Optional[List[str]] = None
+
+class InvestopediaTermsDocument(BaseDocument):
+    term: str
+    url: str
+    definition: str
+    content: Content
+    metadata: Metadata
+    crawled_at: datetime = Field(default_factory=datetime.utcnow)
+
+    class Settings:
         name = "investopedia"
+
+# Macro-economic Reports (FOMC transcripts, the Beige Book, etc.)
+class MacroEconomicReportDocument(BaseDocument):
+    date: datetime
+    type: str
+    content: Content
+    metadata: Metadata
+    crawled_at: datetime = Field(default_factory=datetime.utcnow)
+
+    class Settings:
+        name = "macro_economic_reports"
+
+# Industry Research Reports from Delloitte, PWC, EY, etc.

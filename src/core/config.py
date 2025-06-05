@@ -9,8 +9,6 @@ class AppSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=ROOT_DIR, env_file_encoding="utf-8")
 
     # MongoDB configs
-    QDRANT_CLOUD_URL: str | None = "https://de3e8544-198a-45c1-a8f4-1f8da581443e.us-east-1-0.aws.cloud.qdrant.io"
-    QDRANT_API_KEY: str | None = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.Q0A0aKlTd95cD5U0Bnl2tVB3RTb3jw9CkKApUTRwxmM"
     MONGO_DATABASE_URI: str = "mongodb+srv://giaptomhoang:mMmbProbiaB0bI3a@finbud-model.w2otx5f.mongodb.net/?retryWrites=true&w=majority&appName=Finbud-model"
     MONGO_DATABASE_NAME: str = "twin"
 
@@ -24,6 +22,9 @@ class AppSettings(BaseSettings):
     QDRANT_DATABASE_HOST: str = "qdrant"
     QDRANT_DATABASE_PORT: int = 6333
     USE_QDRANT_CLOUD: bool = True
+    QDRANT_CLOUD_URL: str | None = "https://de3e8544-198a-45c1-a8f4-1f8da581443e.us-east-1-0.aws.cloud.qdrant.io"
+    QDRANT_API_KEY: str | None = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.Q0A0aKlTd95cD5U0Bnl2tVB3RTb3jw9CkKApUTRwxmM"
+   
 
     # OpenAI config
     OPENAI_MODEL_ID: str = "gpt-4o-mini"
