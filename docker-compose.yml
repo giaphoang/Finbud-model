@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   mongo1:
     image: mongo:5
@@ -104,6 +106,19 @@ services:
       - mq
       - qdrant
     restart: always
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL_ID=${OPENAI_MODEL_ID}
+      - QDRANT_CLOUD_URL=${QDRANT_CLOUD_URL}
+      - QDRANT_APIKEY=${QDRANT_APIKEY}
+    volumes:
+      - .:/app
+    command: poetry run python src/backend/api/main.py
 
 volumes:
   mongo-replica-1-data:

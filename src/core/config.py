@@ -1,6 +1,6 @@
 from pathlib import Path
-
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Optional
 
 ROOT_DIR = str(Path(__file__).parent.parent.parent)
 
@@ -19,11 +19,11 @@ class AppSettings(BaseSettings):
     RABBITMQ_PORT: int = 5673
 
     # QdrantDB config
-    QDRANT_DATABASE_HOST: str = "qdrant"
+    QDRANT_DATABASE_HOST: str = "localhost"
     QDRANT_DATABASE_PORT: int = 6333
     USE_QDRANT_CLOUD: bool = True
-    QDRANT_CLOUD_URL: str | None = "https://de3e8544-198a-45c1-a8f4-1f8da581443e.us-east-1-0.aws.cloud.qdrant.io"
-    QDRANT_API_KEY: str | None = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.Q0A0aKlTd95cD5U0Bnl2tVB3RTb3jw9CkKApUTRwxmM"
+    QDRANT_CLOUD_URL: str = "https://5b7a779e-5532-4bc2-9cad-649ad8f8d034.us-east-1-0.aws.cloud.qdrant.io"
+    QDRANT_APIKEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.pxp_du1nrHJJhAcPgFXhoQjZfsx8TLW5Blw3WhE3Qn0"
    
 
     # OpenAI config

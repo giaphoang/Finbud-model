@@ -21,10 +21,8 @@ def main():
         collections_to_process = [
             ("edgar_fillings", "edgar_fillings"),
             # ("earnings_call_transcripts", "earnings_call_transcripts"),
-            # ("yahoo", "yahoo"),
-            # ("bloomberg", "bloomberg"),
-            # ("investopedia_personal_finance", "investopedia_personal_finance"),
-            # ("investopedia_terms", "investopedia_terms"),
+            # ("financial_news", "financial_news"),
+            # ("investopedia", "investopedia"),
             # ("macro_economic_reports", "macro_economic_reports")
         ]
         

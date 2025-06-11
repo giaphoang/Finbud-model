@@ -3,7 +3,7 @@ from typing import Any
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from core import lib
-from crawlers import _10KCrawler, _10QCrawler, DEF14ACrawler, Form4Crawler, _8KCrawler, EarningsCallTranscriptCrawler, YahooFinanceCrawler, BloombergCrawler, InvestopediaCrawler, InvestopediaPersonalFinanceCrawler, FOMCEconomicCrawler, BEIGEconomicCrawler, InvestopediaTermsCrawler
+from crawlers import _10KCrawler, _10QCrawler, DEF14ACrawler, Form4Crawler, _8KCrawler, EarningsCallTranscriptCrawler, YahooFinanceCrawler, BloombergCrawler, InvestopediaPersonalFinanceCrawler, FOMCEconomicCrawler, BEIGEconomicCrawler, InvestopediaTermsCrawler
 from dispatcher import CrawlerDispatcher
 
 logger = Logger(service="llm-twin-course/crawler")
@@ -37,6 +37,6 @@ def handler(event, context: LambdaContext | None = None) -> dict[str, Any]:
 
 if __name__ == "__main__":
     event = {
-        "link": "bloomberg",  # This will trigger the crawler
+        "link": "earnings_call_transcript",  # This will trigger the crawler
     }
     handler(event, None)

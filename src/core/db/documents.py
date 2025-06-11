@@ -122,34 +122,16 @@ class EarningsCallTranscriptDocument(BaseDocument):
     
     class Settings:
         name = "earnings_call_transcripts"
-        
-class YahooFinanceDocument(BaseDocument):
-    source: str
-    title: str
-    link: str | None
-    summary: str | None
-    publish_date: str | None
-    class Settings:
-        name = "yahoo"
-        
-class BloombergDocument(BaseDocument):
-    source: str
-    title: str
-    link: str | None
-    summary: str | None
-    publish_date: str | None
-    class Settings:
-        name = "bloomberg"
-        
 
-class InvestopediaPersonalFinanceDocument(BaseDocument):
+# Bloomberg, InvestopediaPersonalFiance, YahooFinance, etc.
+class FinancialNewsDocument(BaseDocument):
     source: str
     title: str
     link: str | None
     summary: str | None
-    publish_date: datetime | None
+    date: str | None
     class Settings:
-        name = "investopedia_personal_finance"
+        name = "financial_news"
 
 # Investopedia Financial Terms Document
 

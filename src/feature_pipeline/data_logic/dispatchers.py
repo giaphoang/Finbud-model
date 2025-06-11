@@ -3,9 +3,6 @@ from models.base import DataModel
 from models.raw import (
     EdgarFillingRawModel,
     EarningsCallTranscriptRawModel,
-    YahooFinanceRawModel,
-    BloombergRawModel,
-    InvestopediaPersonalFinanceRawModel,
     InvestopediaTermsRawModel,
     MacroEconomicReportRawModel
 )
@@ -14,9 +11,6 @@ from data_logic.chunking_data_handlers import (
     ChunkingDataHandler,
     EdgarFillingChunkingHandler,
     EarningsCallTranscriptChunkingHandler,
-    YahooFinanceChunkingHandler,
-    BloombergChunkingHandler,
-    InvestopediaPersonalFinanceChunkingHandler,
     InvestopediaTermsChunkingHandler,
     MacroEconomicReportChunkingHandler
 )
@@ -25,9 +19,6 @@ from data_logic.cleaning_data_handlers import (
     CleaningDataHandler,
     EdgarFillingCleaningHandler,
     EarningsCallTranscriptCleaningHandler,
-    YahooFinanceCleaningHandler,
-    BloombergCleaningHandler,
-    InvestopediaPersonalFinanceCleaningHandler,
     InvestopediaTermsCleaningHandler,
     MacroEconomicReportCleaningHandler
 )
@@ -36,9 +27,6 @@ from data_logic.embedding_data_handlers import (
     EmbeddingDataHandler,
     EdgarFillingEmbeddingHandler,
     EarningsCallTranscriptEmbeddingHandler,
-    YahooFinanceEmbeddingHandler,
-    BloombergEmbeddingHandler,
-    InvestopediaPersonalFinanceEmbeddingHandler,
     InvestopediaTermsEmbeddingHandler,
     MacroEconomicReportEmbeddingHandler
 )
@@ -78,12 +66,6 @@ class CleaningHandlerFactory:
             return EdgarFillingCleaningHandler()
         elif data_type == "earnings_call_transcript":
             return EarningsCallTranscriptCleaningHandler()
-        elif data_type == "yahoo":
-            return YahooFinanceCleaningHandler()
-        elif data_type == "bloomberg":
-            return BloombergCleaningHandler()
-        elif data_type == "investopedia_personal_finance":
-            return InvestopediaPersonalFinanceCleaningHandler()
         elif data_type == "investopedia_terms":
             return InvestopediaTermsCleaningHandler()
         elif data_type == "macro_economic_reports":
@@ -117,12 +99,6 @@ class ChunkingHandlerFactory:
             return EdgarFillingChunkingHandler()
         elif data_type == "earnings_call_transcript":
             return EarningsCallTranscriptChunkingHandler()
-        elif data_type == "yahoo":
-            return YahooFinanceChunkingHandler()
-        elif data_type == "bloomberg":
-            return BloombergChunkingHandler()
-        elif data_type == "investopedia_personal_finance":
-            return InvestopediaPersonalFinanceChunkingHandler()
         elif data_type == "investopedia_terms":
             return InvestopediaTermsChunkingHandler()
         elif data_type == "macro_economic_reports":
@@ -156,12 +132,6 @@ class EmbeddingHandlerFactory:
             return EdgarFillingEmbeddingHandler()
         elif data_type == "earnings_call_transcript":
             return EarningsCallTranscriptEmbeddingHandler()
-        elif data_type == "yahoo":
-            return YahooFinanceEmbeddingHandler()
-        elif data_type == "bloomberg":
-            return BloombergEmbeddingHandler()
-        elif data_type == "investopedia_personal_finance":
-            return InvestopediaPersonalFinanceEmbeddingHandler()
         elif data_type == "investopedia_terms":
             return InvestopediaTermsEmbeddingHandler()
         elif data_type == "macro_economic_reports":

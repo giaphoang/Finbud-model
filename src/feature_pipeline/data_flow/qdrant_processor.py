@@ -1,5 +1,4 @@
 from typing import List, Optional, Dict, Any
-from datetime import datetime
 import time
 from core import get_logger
 from core.db.mongo import connection
@@ -10,36 +9,28 @@ from models.base import VectorDBDataModel
 from models.raw import (
     EdgarFillingRawModel,
     EarningsCallTranscriptRawModel,
-    YahooFinanceRawModel,
-    BloombergRawModel,
-    InvestopediaPersonalFinanceRawModel,
+    FinancialNewsRawModel,
     InvestopediaTermsRawModel,
     MacroEconomicReportRawModel
 )
 from feature_pipeline.data_logic.cleaning_data_handlers import (
     EdgarFillingCleaningHandler,
     EarningsCallTranscriptCleaningHandler,
-    YahooFinanceCleaningHandler,
-    BloombergCleaningHandler,
-    InvestopediaPersonalFinanceCleaningHandler,
+    FinancialNewsCleaningHandler,
     InvestopediaTermsCleaningHandler,
     MacroEconomicReportCleaningHandler
 )
 from feature_pipeline.data_logic.chunking_data_handlers import (
     EdgarFillingChunkingHandler,
     EarningsCallTranscriptChunkingHandler,
-    YahooFinanceChunkingHandler,
-    BloombergChunkingHandler,
-    InvestopediaPersonalFinanceChunkingHandler,
+    FinancialNewsChunkingHandler,
     InvestopediaTermsChunkingHandler,
     MacroEconomicReportChunkingHandler
 )
 from feature_pipeline.data_logic.embedding_data_handlers import (
     EdgarFillingEmbeddingHandler,
     EarningsCallTranscriptEmbeddingHandler,
-    YahooFinanceEmbeddingHandler,
-    BloombergEmbeddingHandler,
-    InvestopediaPersonalFinanceEmbeddingHandler,
+    FinancialNewsEmbeddingHandler,
     InvestopediaTermsEmbeddingHandler,
     MacroEconomicReportEmbeddingHandler
 )
@@ -53,45 +44,56 @@ class QdrantProcessor:
     def __init__(
         self,
         qdrant_connector: QdrantDatabaseConnector,
-        batch_size: int = 100
+        batch_size: int = 50
     ):
         self.qdrant_connector = qdrant_connector
         self.batch_size = batch_size
+        self.max_retries = 3
+        self.retry_delay = 2  # seconds
         
         # Initialize handlers
         self.cleaning_handlers = {
             "edgar_fillings": EdgarFillingCleaningHandler(),
             "earnings_call_transcripts": EarningsCallTranscriptCleaningHandler(),
-            "yahoo": YahooFinanceCleaningHandler(),
-            "bloomberg": BloombergCleaningHandler(),
-            "investopedia_personal_finance": InvestopediaPersonalFinanceCleaningHandler(),
-            "investopedia_terms": InvestopediaTermsCleaningHandler(),
+            "financial_news": FinancialNewsCleaningHandler(),
+            "investopedia": InvestopediaTermsCleaningHandler(),
             "macro_economic_reports": MacroEconomicReportCleaningHandler()
         }
         
         self.chunking_handlers = {
             "edgar_fillings": EdgarFillingChunkingHandler(),
             "earnings_call_transcripts": EarningsCallTranscriptChunkingHandler(),
-            "yahoo": YahooFinanceChunkingHandler(),
-            "bloomberg": BloombergChunkingHandler(),
-            "investopedia_personal_finance": InvestopediaPersonalFinanceChunkingHandler(),
-            "investopedia_terms": InvestopediaTermsChunkingHandler(),
+            "financial_news": FinancialNewsChunkingHandler(),
+            "investopedia": InvestopediaTermsChunkingHandler(),
             "macro_economic_reports": MacroEconomicReportChunkingHandler()
         }
         
         self.embedding_handlers = {
             "edgar_fillings": EdgarFillingEmbeddingHandler(),
             "earnings_call_transcripts": EarningsCallTranscriptEmbeddingHandler(),
-            "yahoo": YahooFinanceEmbeddingHandler(),
-            "bloomberg": BloombergEmbeddingHandler(),
-            "investopedia_personal_finance": InvestopediaPersonalFinanceEmbeddingHandler(),
-            "investopedia_terms": InvestopediaTermsEmbeddingHandler(),
+            "financial_news": FinancialNewsEmbeddingHandler(),
+            "investopedia": InvestopediaTermsEmbeddingHandler(),
             "macro_economic_reports": MacroEconomicReportEmbeddingHandler()
         }
 
         # Initialize Qdrant outputs
         self.clean_output = QdrantOutput(connection=qdrant_connector, sink_type="clean")
         self.vector_output = QdrantOutput(connection=qdrant_connector, sink_type="vector")
+
+    def _write_with_retry(self, output, items, retry_count=0):
+        """Helper method to write data with retry logic"""
+        try:
+            output.build(0, 1).write_batch(items)
+        except Exception as e:
+            if "timeout" in str(e).lower() and retry_count < self.max_retries:
+                logger.warning(
+                    f"Timeout occurred, retrying... (Attempt {retry_count + 1}/{self.max_retries})",
+                    error=str(e)
+                )
+                time.sleep(self.retry_delay)
+                return self._write_with_retry(output, items, retry_count + 1)
+            else:
+                raise
 
     def process_collection(self, collection_name: str, data_type: str):
         """Process a single collection from MongoDB to Qdrant"""
@@ -110,17 +112,23 @@ class QdrantProcessor:
             total_documents=total_docs
         )
         
-        # Process documents with retry logic
+        # Process documents in batches
         while total_processed < total_docs:
             try:
-                # Create a cursor with no timeout and explicit batch size
-                cursor = collection.find().max_time_ms(200000)  # 2 minutes timeout
+                # Create a cursor with a smaller timeout and explicit batch size
+                cursor = collection.find().skip(total_processed).limit(self.batch_size).max_time_ms(60000)  # 1 minute timeout
                 
-                for doc in cursor:
+                batch_docs = list(cursor)  # Convert cursor to list immediately to avoid timeout issues
+                if not batch_docs:
+                    break
+                
+                for doc in batch_docs:
                     try:
                         # Convert MongoDB _id to entry_id and create appropriate model
                         doc['entry_id'] = str(doc.pop('_id'))
                         doc['type'] = data_type
+                        
+                        doc.pop("metadata", None)
                         
                         # Create appropriate raw model based on data type
                         raw_model = self._create_raw_model(doc, data_type)
@@ -133,21 +141,26 @@ class QdrantProcessor:
                         # Clean
                         cleaned_data = cleaning_handler.clean(raw_model)
                         
-                        # Store cleaned data
-                        self.clean_output.build(0, 1).write_batch([cleaned_data])
+                        # Store cleaned data with retry
+                        self._write_with_retry(self.clean_output, [cleaned_data])
                         
                         # Chunk
                         chunks = chunking_handler.chunk(cleaned_data)
                         
+                        # Process chunks in smaller sub-batches
+                        chunk_batch_size = 10  # Process chunks in smaller batches
+                        for i in range(0, len(chunks), chunk_batch_size):
+                            chunk_batch = chunks[i:i + chunk_batch_size]
+                        
                         # Embed chunks
                         embedded_chunks = []
-                        for chunk in chunks:
+                            for chunk in chunk_batch:
                             embedded_chunk = embedding_handler.embedd(chunk)
                             embedded_chunks.append(embedded_chunk)
                         
-                        # Store embedded chunks
+                            # Store embedded chunks with retry
                         if embedded_chunks:
-                            self.vector_output.build(0, 1).write_batch(embedded_chunks)
+                                self._write_with_retry(self.vector_output, embedded_chunks)
                         
                         total_processed += 1
                         
@@ -170,9 +183,6 @@ class QdrantProcessor:
                             collection=collection_name
                         )
                         continue
-                
-                # If we get here, we've successfully processed all documents
-                break
                 
             except Exception as e:
                 if "CursorNotFound" in str(e):
@@ -213,13 +223,9 @@ class QdrantProcessor:
             return EdgarFillingRawModel(**doc)
         elif data_type == "earnings_call_transcripts":
             return EarningsCallTranscriptRawModel(**doc)
-        elif data_type == "yahoo":
-            return YahooFinanceRawModel(**doc)
-        elif data_type == "bloomberg":
-            return BloombergRawModel(**doc)
-        elif data_type == "investopedia_personal_finance":
-            return InvestopediaPersonalFinanceRawModel(**doc)
-        elif data_type == "investopedia_terms":
+        elif data_type == "financial_news":
+            return FinancialNewsRawModel(**doc)
+        elif data_type == "investopedia":
             return InvestopediaTermsRawModel(**doc)
         elif data_type == "macro_economic_reports":
             return MacroEconomicReportRawModel(**doc)

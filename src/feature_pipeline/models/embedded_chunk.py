@@ -59,7 +59,7 @@ class EarningsCallTranscriptEmbeddedChunkModel(VectorDBDataModel):
 
         return self.chunk_id, self.embedded_content, data
 
-class YahooFinanceEmbeddedChunkModel(VectorDBDataModel):
+class FinancialNewsEmbeddedChunkModel(VectorDBDataModel):
     entry_id: str
     source: str
     title: str
@@ -67,7 +67,7 @@ class YahooFinanceEmbeddedChunkModel(VectorDBDataModel):
     chunk_id: str
     chunk_content: str
     embedded_content: np.ndarray
-    publish_date: Optional[str]
+    date: Optional[str]
     type: str
     
     class Config:
@@ -81,64 +81,9 @@ class YahooFinanceEmbeddedChunkModel(VectorDBDataModel):
             "title": self.title,
             "link": self.link,
             "content": self.chunk_content,
-            "publish_date": self.publish_date
+            "date": self.date
         }
         return self.chunk_id, self.embedded_content, data
-
-
-class BloombergEmbeddedChunkModel(VectorDBDataModel):
-    entry_id: str
-    source: str
-    title: str
-    link: Optional[str]
-    chunk_id: str
-    chunk_content: str
-    embedded_content: np.ndarray
-    publish_date: Optional[str]
-    type: str
-    
-    class Config:
-        arbitrary_types_allowed = True
-
-    def to_payload(self) -> Tuple[str, List[float], dict]:
-        data = {
-            "id": self.entry_id,
-            "type": self.type,
-            "source": self.source,
-            "title": self.title,
-            "link": self.link,
-            "content": self.chunk_content,
-            "publish_date": self.publish_date
-        }
-        return self.chunk_id, self.embedded_content, data
-
-
-class InvestopediaPersonalFinanceEmbeddedChunkModel(VectorDBDataModel):
-    entry_id: str
-    source: str
-    title: str
-    link: Optional[str]
-    chunk_id: str
-    chunk_content: str
-    embedded_content: np.ndarray
-    publish_date: Optional[datetime]
-    type: str
-    
-    class Config:
-        arbitrary_types_allowed = True
-
-    def to_payload(self) -> Tuple[str, List[float], dict]:
-        data = {
-            "id": self.entry_id,
-            "type": self.type,
-            "source": self.source,
-            "title": self.title,
-            "link": self.link,
-            "content": self.chunk_content,
-            "publish_date": self.publish_date
-        }
-        return self.chunk_id, self.embedded_content, data
-
 
 class Section(BaseModel):
     heading: str
@@ -163,10 +108,10 @@ class InvestopediaTermsEmbeddedChunkModel(VectorDBDataModel):
     entry_id: str
     term: str
     url: str
+    definition: str
     chunk_id: str
     chunk_content: str
     embedded_content: np.ndarray
-    metadata: Metadata
     crawled_at: datetime
     type: str
     
@@ -180,7 +125,6 @@ class InvestopediaTermsEmbeddedChunkModel(VectorDBDataModel):
             "term": self.term,
             "url": self.url,
             "content": self.chunk_content,
-            "metadata": self.metadata.dict(),
             "crawled_at": self.crawled_at
         }
         return self.chunk_id, self.embedded_content, data
@@ -192,7 +136,6 @@ class MacroEconomicReportEmbeddedChunkModel(VectorDBDataModel):
     chunk_id: str
     chunk_content: str
     embedded_content: np.ndarray
-    metadata: Metadata
     crawled_at: datetime
     type: str
     
@@ -205,7 +148,6 @@ class MacroEconomicReportEmbeddedChunkModel(VectorDBDataModel):
             "type": self.type,
             "date": self.date,
             "content": self.chunk_content,
-            "metadata": self.metadata.dict(),
             "crawled_at": self.crawled_at
         }
         return self.chunk_id, self.embedded_content, data

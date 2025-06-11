@@ -1,9 +1,13 @@
-from config import settings
+from core.config import settings
 from langchain_openai import ChatOpenAI
 from groq import Groq
 
 from core.rag.prompt_templates import RerankingTemplate
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Reranker:
     @staticmethod
@@ -13,7 +17,9 @@ class Reranker:
         reranking_template = RerankingTemplate()
         prompt = reranking_template.create_template(keep_top_k=keep_top_k)
         model = ChatOpenAI(
-            model=settings.OPENAI_MODEL_ID, api_key=settings.OPENAI_API_KEY
+            model=os.getenv("OPENAI_MODEL_ID"),
+            api_key=os.getenv("OPENAI_API_KEY"),
+            temperature=0
         )
         chain = prompt | model
 

@@ -51,6 +51,9 @@ sagemaker = ">=2.232.2"
 sentence-transformers = "^2.2.2"
 gradio = "^5.5.0"
 groq = "^0.25.0"
+fastapi = "^0.115.12"
+uvicorn = "^0.34.3"
+python-dotenv = "^1.1.0"
 
 [tool.poetry.group.feature_pipeline.dependencies]
 bytewax = "0.18.2"

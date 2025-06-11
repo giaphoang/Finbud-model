@@ -15,7 +15,6 @@ class EdgarFillingCleanedModel(VectorDBDataModel):
 
     def to_payload(self) -> Tuple[str, dict]:
         data = {
-            "entry_id": self.entry_id,
             "source": self.source,
             "url": self.url,
             "date": self.date,
@@ -36,7 +35,6 @@ class EarningsCallTranscriptCleanedModel(VectorDBDataModel):
     
     def to_payload(self) -> Tuple[str, dict]:
         data = {
-            "entry_id": self.entry_id,
             "source": self.source,
             "url": self.url,
             "date": self.date,
@@ -46,44 +44,22 @@ class EarningsCallTranscriptCleanedModel(VectorDBDataModel):
 
         return self.entry_id, data
 
-class YahooFinanceCleanedModel(VectorDBDataModel):
+class FinancialNewsCleanedModel(VectorDBDataModel):
     entry_id: str
     source: str
     title: str
     link: Optional[str]
     cleaned_content: Optional[str]
-    publish_date: Optional[str]
+    date: Optional[str]
     type: str
 
     def to_payload(self) -> Tuple[str, dict]:
         data = {
-            "entry_id": self.entry_id,
             "source": self.source,
             "title": self.title,
             "link": self.link,
             "cleaned_content": self.cleaned_content,
-            "publish_date": self.publish_date,
-            "type": self.type
-        }
-        return self.entry_id, data
-
-class BloombergCleanedModel(VectorDBDataModel):
-    entry_id: str
-    source: str
-    title: str
-    link: Optional[str]
-    cleaned_content: Optional[str]
-    publish_date: Optional[str]
-    type: str
-
-    def to_payload(self) -> Tuple[str, dict]:
-        data = {
-            "entry_id": self.entry_id,
-            "source": self.source,
-            "title": self.title,
-            "link": self.link,
-            "cleaned_content": self.cleaned_content,
-            "publish_date": self.publish_date,
+            "date": self.date,
             "type": self.type
         }
         return self.entry_id, data
@@ -97,32 +73,10 @@ class Content(BaseModel):
     title: str
     sections: List[Section]
 
-class InvestopediaPersonalFinanceCleanedModel(VectorDBDataModel):
-    entry_id: str
-    source: str
-    title: str
-    link: Optional[str]
-    cleaned_content: Optional[str]
-    publish_date: Optional[datetime]
-    type: str   
-
-    def to_payload(self) -> Tuple[str, dict]:
-        data = {
-            "entry_id": self.entry_id,
-            "source": self.source,
-            "title": self.title,
-            "link": self.link,
-            "cleaned_content": self.cleaned_content,
-            "publish_date": self.publish_date,
-            "type": self.type
-        }
-        return self.entry_id, data
-
 class Section(BaseModel):
     heading: str
     text: Optional[str] = None
     list: Optional[List[str]] = None
-
 
 class Metadata(BaseModel):
     source: str
@@ -142,7 +96,6 @@ class InvestopediaTermsCleanedModel(VectorDBDataModel):
 
     def to_payload(self) -> Tuple[str, dict]:
         data = {
-            "entry_id": self.entry_id,
             "term": self.term,
             "url": self.url,
             "definition": self.definition,
@@ -157,16 +110,13 @@ class MacroEconomicReportCleanedModel(VectorDBDataModel):
     date: datetime
     type: str
     cleaned_content: str
-    metadata: Metadata
     crawled_at: datetime = Field(default_factory=datetime.utcnow)
 
     def to_payload(self) -> Tuple[str, dict]:
         data = {
-            "entry_id": self.entry_id,
             "date": self.date,
             "type": self.type,
             "cleaned_content": self.cleaned_content,
-            "metadata": self.metadata.model_dump(),
             "crawled_at": self.crawled_at
         }
         return self.entry_id, data

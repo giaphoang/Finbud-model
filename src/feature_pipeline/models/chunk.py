@@ -23,35 +23,14 @@ class EarningsCallTranscriptChunkModel(DataModel):
     chunk_content: str
 
 
-class YahooFinanceChunkModel(DataModel):
-    source: str
+class FinancialNewsChunkModel(DataModel):
     entry_id: str
+    source: str
     title: str
     link: Optional[str]
     chunk_id: str
     chunk_content: str
-    publish_date: Optional[str]
-
-
-class BloombergChunkModel(DataModel):
-    source: str
-    entry_id: str
-    title: str
-    link: Optional[str]
-    chunk_id: str
-    chunk_content: str
-    publish_date: Optional[str]
-
-
-class InvestopediaPersonalFinanceChunkModel(DataModel):
-    source: str
-    entry_id: str
-    title: str
-    link: Optional[str]
-    chunk_id: str
-    chunk_content: str
-    publish_date: Optional[datetime]
-
+    date: Optional[str]
 
 class Section(BaseModel):
     heading: str
@@ -79,7 +58,6 @@ class InvestopediaTermsChunkModel(DataModel):
     definition: str
     chunk_id: str
     chunk_content: str
-    metadata: Metadata
     crawled_at: datetime = Field(default_factory=datetime.utcnow)
 
 
@@ -88,5 +66,4 @@ class MacroEconomicReportChunkModel(DataModel):
     date: datetime
     chunk_id: str
     chunk_content: str
-    metadata: Metadata
     crawled_at: datetime = Field(default_factory=datetime.utcnow)

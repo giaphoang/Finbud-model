@@ -21,31 +21,13 @@ class EarningsCallTranscriptRawModel(DataModel):
     content: str
 
 
-class YahooFinanceRawModel(DataModel):
+class FinancialNewsRawModel(DataModel):
     id: str = Field(alias="entry_id")
     source: str
     title: str
     link: Optional[str]
     summary: Optional[str]
-    publish_date: Optional[str]
-
-
-class BloombergRawModel(DataModel):
-    id: str = Field(alias="entry_id")
-    source: str
-    title: str
-    link: Optional[str]
-    summary: Optional[str]
-    publish_date: Optional[str]
-
-
-class InvestopediaPersonalFinanceRawModel(DataModel):
-    id: str = Field(alias="entry_id")
-    source: str
-    title: str
-    link: Optional[str]
-    summary: Optional[str]
-    publish_date: Optional[datetime]
+    date: Optional[str]
 
 
 class Section(BaseModel):
@@ -73,7 +55,6 @@ class InvestopediaTermsRawModel(DataModel):
     url: str
     definition: str
     content: Content
-    metadata: Metadata
     crawled_at: datetime = Field(default_factory=datetime.utcnow)
 
 
@@ -82,5 +63,4 @@ class MacroEconomicReportRawModel(DataModel):
     date: datetime
     type: str
     content: Content
-    metadata: Metadata
     crawled_at: datetime = Field(default_factory=datetime.utcnow)

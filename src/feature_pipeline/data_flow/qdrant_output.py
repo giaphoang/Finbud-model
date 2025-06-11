@@ -20,18 +20,14 @@ class QdrantOutput(DynamicSink):
         collections = {
             "cleaned_edgar_fillings": False,
             "cleaned_earnings_call_transcripts": False,
-            "cleaned_yahoo": False,
-            "cleaned_bloomberg": False,
-            "cleaned_investopedia_personal_finance": False,
-            "cleaned_investopedia_terms": False,
+            "cleaned_financial_news": False,
+            "cleaned_investopedia": False,
             "cleaned_macro_economic_reports": False,
 
             "vector_edgar_fillings": True,
             "vector_earnings_call_transcripts": True,
-            "vector_yahoo": True,
-            "vector_bloomberg": True,
-            "vector_investopedia_personal_finance": True,
-            "vector_investopedia_terms": True,
+            "vector_financial_news": True,
+            "vector_investopedia": True,
             "vector_macro_economic_reports": True,
         }
 
@@ -107,14 +103,10 @@ def get_clean_collection(data_type: str) -> str:
         return "cleaned_edgar_fillings"
     elif data_type == "earnings_call_transcripts":
         return "cleaned_earnings_call_transcripts"
-    elif data_type == "yahoo":
-        return "cleaned_yahoo"
-    elif data_type == "bloomberg":
-        return "cleaned_bloomberg"
-    elif data_type == "investopedia_personal_finance":
-        return "cleaned_investopedia_personal_finance"
-    elif data_type == "investopedia_terms":
-        return "cleaned_investopedia_terms"
+    elif data_type == "financial_news":
+        return "cleaned_financial_news"
+    elif data_type == "investopedia":
+        return "cleaned_investopedia"
     elif data_type == "macro_economic_reports":
         return "cleaned_macro_economic_reports"
     else:
@@ -126,14 +118,10 @@ def get_vector_collection(data_type: str) -> str:
         return "vector_edgar_fillings"
     elif data_type == "earnings_call_transcripts":
         return "vector_earnings_call_transcripts"
-    elif data_type == "yahoo":
-        return "vector_yahoo"
-    elif data_type == "bloomberg":
-        return "vector_bloomberg"
-    elif data_type == "investopedia_personal_finance":
-        return "vector_investopedia_personal_finance"
-    elif data_type == "investopedia_terms":
-        return "vector_investopedia_terms"
+    elif data_type == "financial_news":
+        return "vector_financial_news"
+    elif data_type == "investopedia":
+        return "vector_investopedia"
     elif data_type == "macro_economic_reports":
         return "vector_macro_economic_reports"
     else:

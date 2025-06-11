@@ -12,7 +12,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from crawlers.base import BaseAbstractCrawler
-from core.db.documents import InvestopediaPersonalFinanceDocument
+from core.db.documents import FinancialNewsDocument
 
 
 class InvestopediaPersonalFinanceCrawler(BaseAbstractCrawler):
@@ -21,7 +21,8 @@ class InvestopediaPersonalFinanceCrawler(BaseAbstractCrawler):
     Collects: headline, link, summary, published date (if available)
     """
     
-    model = InvestopediaPersonalFinanceDocument
+    model = FinancialNewsDocument
+    logger = Logger(service="llm-twin-course/crawler")
 
     def __init__(self, scroll_limit: int = 1):
         super().__init__(scroll_limit=scroll_limit)
@@ -38,51 +39,76 @@ class InvestopediaPersonalFinanceCrawler(BaseAbstractCrawler):
         )
 
         cards = self.driver.find_elements(
-            By.CSS_SELECTOR, "a[id^=mntl-card-list-items_]"
+            By.CSS_SELECTOR, "a.comp.mntl-card-list-items.mntl-document-card.mntl-card.card.card--no-image"
         )
+        print(len(cards), "cards found on Investopedia Personal Finance page")
+        # Collect all links from the cards
+        links = []
+        for idx, card in enumerate(cards):
+            link = card.get_attribute("href")
+            if link:
+                links.append(link)
+            print("Processing card", idx, "with link:", link)
+        if not cards:
+            raise ImproperlyConfigured(
+            "No cards found on the Investopedia Personal Finance page. "
+            "Please check the CSS selector or the page structure."
+            )
+        print("Collected links:", links)
 
-        for card in cards:
+        for idx, link in enumerate(links):
             try:
-                title_elem = card.find_element(
-                    By.CSS_SELECTOR, ".card__title-text"
-                )
-                # anchor = title_elem.find_element(By.TAG_NAME, "a")
-                title = title_elem.text.strip()
-                link = card.get_attribute("href")
+                print("link:", link)
 
-                pub_date = None
-                try:
-                    time_elem = card.find_element(By.CSS_SELECTOR, ".displayed-date__date")
-                    date_text = time_elem.get_attribute("datetime") or time_elem.text
-                    from dateutil.parser import parse as dateparse
-                    pub_date = dateparse(date_text)
-                except:
-                    pub_date = None
-                
                 summary = None
                 if link:  
                     self.driver.get(link)
                     try:
+                        # Wait until the page is loaded or the title is visible
+                        WebDriverWait(self.driver, 10).until(
+                            EC.presence_of_element_located((By.CSS_SELECTOR, "h1"))
+                        )
+                        title = self.driver.find_element(By.CSS_SELECTOR, "h1").text.strip()
+                        # Extract the date from the div with class "mntl-attribution__item-date"
+                        try:
+                            date_elem = self.driver.find_element(By.CSS_SELECTOR, "div.mntl-attribution__item-date")
+                            date_text = date_elem.text.strip()
+                            # Remove "Published " prefix if present
+                            # Extract the date after the first space character
+                            from dateutil.parser import parse as dateparse
+                            first_space = date_text.find(" ")
+                            if first_space != -1:
+                                date = date_text[first_space + 1:].strip()
+                        except Exception as date_exc:
+                            date = None
+                            print(f"[Investopedia Personal Finance] Failed to extract date for card {idx} - {title}: {date_exc}")
                         takeaway = self.driver.find_elements(
                             By.CSS_SELECTOR, "div .mntl-sc-block-universal-callout__body li"
                         )
                         takeaway_str = [point.text.strip() for point in takeaway]
                         summary = ' '.join(takeaway_str)
-                    except: 
-                        summery = None
+                    except Exception as summary_exc: 
+                        summary = None
+                        print(f"[Investopedia Personal Finance] Failed to extract summary for card {idx} - {title}: {summary_exc}")
 
-                doc = InvestopediaPersonalFinanceDocument(
+                doc = self.model(
                     source="investopedia_personal_finance",
                     title=title,
                     link=link,
                     summary=summary,
-                    publish_date=pub_date
+                    date=date
                 )
                 doc.save()
                 print(f"[Investopedia Personal Finance] Saved: {title}")
             except Exception as e:
-                print("[Investopedia Personal Finance] Skipping one card due to:", e)
-                continue
+                print(f"[Investopedia Personal Finance] Skipping card {idx}. Exception: {e}")
+                try:
+                    # Try to log card info if possible
+                    title = card.text if card else 'N/A'
+                    print(f"[Investopedia Personal Finance] Card {idx} text: {title}")
+                except Exception as inner_exc:
+                    print(f"[Investopedia Personal Finance] Could not get card text for card {idx}: {inner_exc}")
+                break
 
         print("Investopedia Personal Finance crawl complete.")
         time.sleep(2)

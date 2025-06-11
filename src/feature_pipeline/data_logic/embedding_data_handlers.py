@@ -4,18 +4,14 @@ from models.base import DataModel
 from models.chunk import (
     EdgarFillingChunkModel,
     EarningsCallTranscriptChunkModel,
-    YahooFinanceChunkModel,
-    BloombergChunkModel,
-    InvestopediaPersonalFinanceChunkModel,
+    FinancialNewsChunkModel,
     InvestopediaTermsChunkModel,
     MacroEconomicReportChunkModel
 )
 from models.embedded_chunk import (
     EdgarFillingEmbeddedChunkModel,
     EarningsCallTranscriptEmbeddedChunkModel,
-    YahooFinanceEmbeddedChunkModel,
-    BloombergEmbeddedChunkModel,
-    InvestopediaPersonalFinanceEmbeddedChunkModel,
+    FinancialNewsEmbeddedChunkModel,
     InvestopediaTermsEmbeddedChunkModel,
     MacroEconomicReportEmbeddedChunkModel
 )
@@ -58,43 +54,15 @@ class EarningsCallTranscriptEmbeddingHandler(EmbeddingDataHandler):
             embedded_content=embedd_text(data_model.chunk_content)
         )
 
-class YahooFinanceEmbeddingHandler(EmbeddingDataHandler):
-    def embedd(self, data_model: YahooFinanceChunkModel) -> YahooFinanceEmbeddedChunkModel:
-        return YahooFinanceEmbeddedChunkModel(
+class FinancialNewsEmbeddingHandler(EmbeddingDataHandler):
+    def embedd(self, data_model: FinancialNewsChunkModel) -> FinancialNewsEmbeddedChunkModel:
+        return FinancialNewsEmbeddedChunkModel(
             entry_id=data_model.entry_id,
             type=data_model.type,
             source=data_model.source,
             title=data_model.title,
             link=data_model.link,
-            publish_date=data_model.publish_date,
-            chunk_id=data_model.chunk_id,
-            chunk_content=data_model.chunk_content,
-            embedded_content=embedd_text(data_model.chunk_content)
-        )
-
-class BloombergEmbeddingHandler(EmbeddingDataHandler):
-    def embedd(self, data_model: BloombergChunkModel) -> BloombergEmbeddedChunkModel:
-
-        return BloombergEmbeddedChunkModel(
-            entry_id=data_model.entry_id,
-            type=data_model.type,
-            source=data_model.source,
-            title=data_model.title,
-            link=data_model.link,
-            publish_date=data_model.publish_date,
-            chunk_id=data_model.chunk_id,
-            chunk_content=data_model.chunk_content,
-            embedded_content=embedd_text(data_model.chunk_content)
-        )
-
-class InvestopediaPersonalFinanceEmbeddingHandler(EmbeddingDataHandler):
-    def embedd(self, data_model: InvestopediaPersonalFinanceChunkModel) -> InvestopediaPersonalFinanceEmbeddedChunkModel:
-        return InvestopediaPersonalFinanceEmbeddedChunkModel(
-            entry_id=data_model.entry_id,
-            type=data_model.type,
-            source=data_model.source,
-            title=data_model.title,
-            link=data_model.link,
+            date=data_model.date,
             chunk_id=data_model.chunk_id,
             chunk_content=data_model.chunk_content,
             embedded_content=embedd_text(data_model.chunk_content)
@@ -107,7 +75,7 @@ class InvestopediaTermsEmbeddingHandler(EmbeddingDataHandler):
             type=data_model.type,
             term=data_model.term,
             url=data_model.url,
-            metadata=data_model.metadata,
+            definition=data_model.definition,
             crawled_at=data_model.crawled_at,
             chunk_id=data_model.chunk_id,
             chunk_content=data_model.chunk_content,
@@ -122,7 +90,6 @@ class MacroEconomicReportEmbeddingHandler(EmbeddingDataHandler):
             date=data_model.date,
             chunk_id=data_model.chunk_id,
             chunk_content=data_model.chunk_content,
-            metadata=data_model.metadata,
             crawled_at=data_model.crawled_at,
             embedded_content=embedd_text(data_model.chunk_content)
         )
