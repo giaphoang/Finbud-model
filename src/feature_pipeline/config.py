@@ -38,10 +38,11 @@ class Settings(BaseSettings):
     QDRANT_DATABASE_HOST: str = "qdrant"  # or localhost if running outside Docker
     QDRANT_DATABASE_PORT: int = 6333
     USE_QDRANT_CLOUD: bool = (
-        False  # if True, fill in QDRANT_CLOUD_URL and QDRANT_APIKEY
+        True  # if True, fill in QDRANT_CLOUD_URL and QDRANT_APIKEY
     )
-    QDRANT_CLOUD_URL: str | None = None
-    QDRANT_APIKEY: str | None = None
-
+    QDRANT_CLOUD_URL: str | None = "https://de3e8544-198a-45c1-a8f4-1f8da581443e.us-east-1-0.aws.cloud.qdrant.io"
+    QDRANT_CLOUD_API_KEY: str | None = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.Q0A0aKlTd95cD5U0Bnl2tVB3RTb3jw9CkKApUTRwxmM"
+    MONGO_DATABASE_URI: str = "mongodb+srv://giaptomhoang:mMmbProbiaB0bI3a@finbud-model.w2otx5f.mongodb.net/?retryWrites=true&w=majority&appName=Finbud-model"
+    MONGO_DATABASE_NAME: str = "twin"
 
 settings = Settings()

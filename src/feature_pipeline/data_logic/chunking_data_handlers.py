@@ -1,9 +1,10 @@
 import hashlib
 from abc import ABC, abstractmethod
+from typing import List, Any
 
 from models.base import DataModel
-from models.chunk import ArticleChunkModel, PostChunkModel, RepositoryChunkModel
-from models.clean import ArticleCleanedModel, PostCleanedModel, RepositoryCleanedModel
+from models.chunk import EdgarFillingChunkModel, EarningsCallTranscriptChunkModel, FinancialNewsChunkModel, InvestopediaTermsChunkModel, MacroEconomicReportChunkModel
+from models.clean import EdgarFillingCleanedModel, EarningsCallTranscriptCleanedModel, FinancialNewsCleanedModel, InvestopediaTermsCleanedModel, MacroEconomicReportCleanedModel
 from utils.chunking import chunk_text
 
 
@@ -17,68 +18,109 @@ class ChunkingDataHandler(ABC):
     def chunk(self, data_model: DataModel) -> list[DataModel]:
         pass
 
-
-class PostChunkingHandler(ChunkingDataHandler):
-    def chunk(self, data_model: PostCleanedModel) -> list[PostChunkModel]:
+class EdgarFillingChunkingHandler(ChunkingDataHandler):
+    def chunk(self, data_model: EdgarFillingCleanedModel) -> list[EdgarFillingChunkModel]:
         data_models_list = []
-
+        
         text_content = data_model.cleaned_content
         chunks = chunk_text(text_content)
-
+        
         for chunk in chunks:
-            model = PostChunkModel(
+            model = EdgarFillingChunkModel(
                 entry_id=data_model.entry_id,
-                platform=data_model.platform,
+                source=data_model.source,
+                url=data_model.url,
+                date=data_model.date,
+                ticker=data_model.ticker,
                 chunk_id=hashlib.md5(chunk.encode()).hexdigest(),
                 chunk_content=chunk,
-                author_id=data_model.author_id,
-                image=data_model.image if data_model.image else None,
                 type=data_model.type,
             )
             data_models_list.append(model)
-
+        
         return data_models_list
-
-
-class ArticleChunkingHandler(ChunkingDataHandler):
-    def chunk(self, data_model: ArticleCleanedModel) -> list[ArticleChunkModel]:
+    
+class EarningsCallTranscriptChunkingHandler(ChunkingDataHandler):
+    def chunk(self, data_model: EarningsCallTranscriptCleanedModel) -> list[EarningsCallTranscriptChunkModel]:
         data_models_list = []
-
+        
         text_content = data_model.cleaned_content
         chunks = chunk_text(text_content)
-
+        
         for chunk in chunks:
-            model = ArticleChunkModel(
+            model = EarningsCallTranscriptChunkModel(
                 entry_id=data_model.entry_id,
-                platform=data_model.platform,
+                source=data_model.source,
+                url=data_model.url,
+                date=data_model.date,
+                chunk_id=hashlib.md5(chunk.encode()).hexdigest(),
+                chunk_content=chunk,
+                type=data_model.type,
+            )
+            data_models_list.append(model)
+        
+        return data_models_list
+
+class FinancialNewsChunkingHandler(ChunkingDataHandler):
+    def chunk(self, data_model: FinancialNewsCleanedModel) -> List[FinancialNewsChunkModel]:
+        data_models_list = []
+        
+        text_content = data_model.cleaned_content
+        chunks = chunk_text(text_content)
+        
+        for chunk in chunks:
+            model = FinancialNewsChunkModel(
+                entry_id=data_model.entry_id,
+                source=data_model.source,
+                title=data_model.title,
                 link=data_model.link,
                 chunk_id=hashlib.md5(chunk.encode()).hexdigest(),
                 chunk_content=chunk,
-                author_id=data_model.author_id,
-                type=data_model.type,
+                date=data_model.date,
+                type=data_model.type
             )
             data_models_list.append(model)
-
+            
         return data_models_list
 
-
-class RepositoryChunkingHandler(ChunkingDataHandler):
-    def chunk(self, data_model: RepositoryCleanedModel) -> list[RepositoryChunkModel]:
+class InvestopediaTermsChunkingHandler(ChunkingDataHandler):
+    def chunk(self, data_model: InvestopediaTermsCleanedModel) -> List[InvestopediaTermsChunkModel]:
         data_models_list = []
-
+        
         text_content = data_model.cleaned_content
         chunks = chunk_text(text_content)
-
+        
         for chunk in chunks:
-            model = RepositoryChunkModel(
+            model = InvestopediaTermsChunkModel(
                 entry_id=data_model.entry_id,
-                name=data_model.name,
-                link=data_model.link,
+                term=data_model.term,
+                url=data_model.url,
+                definition=data_model.definition,
                 chunk_id=hashlib.md5(chunk.encode()).hexdigest(),
                 chunk_content=chunk,
-                owner_id=data_model.owner_id,
-                type=data_model.type,
+                crawled_at=data_model.crawled_at,
+                type=data_model.type
             )
             data_models_list.append(model)
+            
+        return data_models_list
 
+class MacroEconomicReportChunkingHandler(ChunkingDataHandler):
+    def chunk(self, data_model: MacroEconomicReportCleanedModel) -> List[MacroEconomicReportChunkModel]:
+        data_models_list = []
+        
+        # Use cleaned_content directly since it's already flattened
+        chunks = chunk_text(data_model.cleaned_content)
+        
+        for chunk in chunks:
+            model = MacroEconomicReportChunkModel(
+                entry_id=data_model.entry_id,
+                date=data_model.date,
+                chunk_id=hashlib.md5(chunk.encode()).hexdigest(),
+                chunk_content=chunk,
+                crawled_at=data_model.crawled_at,
+                type=data_model.type
+            )
+            data_models_list.append(model)
+            
         return data_models_list

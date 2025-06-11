@@ -1,14 +1,25 @@
 from abc import ABC, abstractmethod
-
+from typing import Any
 from models.base import DataModel
-from models.clean import ArticleCleanedModel, PostCleanedModel, RepositoryCleanedModel
-from models.raw import ArticleRawModel, PostsRawModel, RepositoryRawModel
+from models.clean import EdgarFillingCleanedModel, EarningsCallTranscriptCleanedModel, FinancialNewsCleanedModel, InvestopediaTermsCleanedModel, MacroEconomicReportCleanedModel
+from models.raw import EdgarFillingRawModel, EarningsCallTranscriptRawModel, FinancialNewsRawModel, InvestopediaTermsRawModel, MacroEconomicReportRawModel
 from utils.cleaning import clean_text
+
+
+def flatten_content(content) -> str:
+    parts = [content.title]
+    for section in content.sections:
+        if getattr(section, 'heading', None):
+            parts.append(section.heading)
+        if getattr(section, 'text', None):
+            parts.append(section.text)
+        if getattr(section, 'list', None):
+            parts.extend(section.list)
+    return "\n".join([str(p) for p in parts if p])
 
 
 class CleaningDataHandler(ABC):
     """
-    Abstract class for all cleaning data handlers.
     All data transformations logic for the cleaning step is done here
     """
 
@@ -16,50 +27,72 @@ class CleaningDataHandler(ABC):
     def clean(self, data_model: DataModel) -> DataModel:
         pass
 
-
-class PostCleaningHandler(CleaningDataHandler):
-    def clean(self, data_model: PostsRawModel) -> PostCleanedModel:
-        joined_text = (
-            "".join(data_model.content.values()) if data_model and data_model.content else None
+class EdgarFillingCleaningHandler(CleaningDataHandler):
+    def clean(self, raw_data: EdgarFillingRawModel) -> EdgarFillingCleanedModel:
+        return EdgarFillingCleanedModel(
+            entry_id=raw_data.entry_id,
+            type=raw_data.type,
+            source=raw_data.source,
+            url=raw_data.url,
+            date=raw_data.date,
+            ticker=raw_data.ticker,
+            cleaned_content=clean_text(raw_data.content)
         )
 
-        return PostCleanedModel(
-            entry_id=data_model.entry_id,
-            platform=data_model.platform,
-            cleaned_content=clean_text(joined_text),
-            author_id=data_model.author_id,
-            image=data_model.image if data_model.image else None,
-            type=data_model.type,
+class EarningsCallTranscriptCleaningHandler(CleaningDataHandler):
+    def clean(self, raw_data: EarningsCallTranscriptRawModel) -> EarningsCallTranscriptCleanedModel:
+        return EarningsCallTranscriptCleanedModel(
+            entry_id=raw_data.entry_id,
+            type=raw_data.type,
+            source=raw_data.source,
+            url=raw_data.url,
+            date=raw_data.date,
+            cleaned_content=clean_text(raw_data.content)
+        )
+    
+class FinancialNewsCleaningHandler(CleaningDataHandler):
+    def clean(self, raw_data: FinancialNewsRawModel) -> FinancialNewsCleanedModel:
+        return FinancialNewsCleanedModel(
+            entry_id=raw_data.entry_id,
+            type=raw_data.type,
+            source=raw_data.source,
+            title=raw_data.title,
+            link=raw_data.link,
+            cleaned_content=clean_text(raw_data.summary),
+            date=raw_data.date
         )
 
-
-class ArticleCleaningHandler(CleaningDataHandler):
-    def clean(self, data_model: ArticleRawModel) -> ArticleCleanedModel:
-        joined_text = (
-            "".join(data_model.content.values()) if data_model and data_model.content else None
+class InvestopediaTermsCleaningHandler(CleaningDataHandler):
+    def clean(self, raw_data: InvestopediaTermsRawModel) -> InvestopediaTermsCleanedModel:
+        # First clean the definition
+        cleaned_definition = clean_text(raw_data.definition)
+        
+        # Then clean the content sections
+        content_str = ""
+        if raw_data.content:
+            content_str = flatten_content(raw_data.content)
+            content_str = clean_text(content_str)
+        
+        # Combine both cleaned texts
+        cleaned_content = f"{cleaned_definition}\n\n{content_str}".strip()
+        
+        return InvestopediaTermsCleanedModel(
+            entry_id=raw_data.entry_id,
+            type=raw_data.type,
+            term=raw_data.term,
+            url=raw_data.url,
+            definition=raw_data.definition,
+            cleaned_content=cleaned_content,
+            crawled_at=raw_data.crawled_at
         )
 
-        return ArticleCleanedModel(
-            entry_id=data_model.entry_id,
-            platform=data_model.platform,
-            link=data_model.link,
-            cleaned_content=clean_text(joined_text),
-            author_id=data_model.author_id,
-            type=data_model.type,
-        )
-
-
-class RepositoryCleaningHandler(CleaningDataHandler):
-    def clean(self, data_model: RepositoryRawModel) -> RepositoryCleanedModel:
-        joined_text = (
-            "".join(data_model.content.values()) if data_model and data_model.content else None
-        )
-
-        return RepositoryCleanedModel(
-            entry_id=data_model.entry_id,
-            name=data_model.name,
-            link=data_model.link,
-            cleaned_content=clean_text(joined_text),
-            owner_id=data_model.owner_id,
-            type=data_model.type,
+class MacroEconomicReportCleaningHandler(CleaningDataHandler):
+    def clean(self, raw_data: MacroEconomicReportRawModel) -> MacroEconomicReportCleanedModel:
+        content_str = flatten_content(raw_data.content)
+        return MacroEconomicReportCleanedModel(
+            entry_id=raw_data.entry_id,
+            type=raw_data.type,
+            date=raw_data.date,
+            cleaned_content=clean_text(content_str),
+            crawled_at=raw_data.crawled_at
         )

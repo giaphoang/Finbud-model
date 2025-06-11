@@ -1,0 +1,15 @@
+# Core dependencies
+python-dotenv>=0.19.0
+typing-extensions>=4.0.0
+
+# Vector database and embeddings
+qdrant-client>=1.1.0
+sentence-transformers>=2.2.0
+
+# LLM and RAG components
+sagemaker>=2.0.0
+opik>=0.1.0
+langchain>=0.0.200
+
+# Data processing (optional - only needed for data pipeline)
+pymongo>=4.0.0 

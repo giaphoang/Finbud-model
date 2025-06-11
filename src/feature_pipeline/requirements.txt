@@ -1,0 +1,6 @@
+# Data pipeline dependencies
+bytewax>=0.9.0
+pymongo>=4.0.0
+ 
+# Include the root requirements
+-r ../../requirements.txt 

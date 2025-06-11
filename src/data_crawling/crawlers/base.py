@@ -19,7 +19,7 @@ class BaseAbstractCrawler(BaseCrawler, ABC):
         options = webdriver.ChromeOptions()
 
         options.add_argument("--no-sandbox")
-        options.add_argument("--headless=new")
+        # options.add_argument("--headless=new")  # Commented out to show browser window
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--log-level=3")
         options.add_argument("--disable-popup-blocking")
@@ -31,6 +31,7 @@ class BaseAbstractCrawler(BaseCrawler, ABC):
         options.add_argument(f"--data-path={mkdtemp()}")
         options.add_argument(f"--disk-cache-dir={mkdtemp()}")
         options.add_argument("--remote-debugging-port=9226")
+        options.add_argument("--window-size=1920,1080")  # Set window size for better visibility
 
         self.set_extra_driver_options(options)
 
@@ -42,7 +43,7 @@ class BaseAbstractCrawler(BaseCrawler, ABC):
     def set_extra_driver_options(self, options: Options) -> None:
         pass
 
-    def extract(self) -> None:
+    def login(self) -> None:
         pass
 
     def scroll_page(self) -> None:

@@ -5,6 +5,9 @@ from core import get_logger
 from openai import OpenAI
 
 MAX_LENGTH = 16384
+
+# edit this prompt to change the system prompt for financial instructions data
+# this is the system prompt that will be used to instruct the LLM
 SYSTEM_PROMPT = (
     "You are a technical writer handing someone's account to post about AI and MLOps."
 )

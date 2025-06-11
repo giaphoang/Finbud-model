@@ -1,15 +1,15 @@
 import uuid
 from typing import List, Optional
+from datetime import datetime
 
 from pydantic import UUID4, BaseModel, ConfigDict, Field
 from pymongo import errors
 
 import core.logger_utils as logger_utils
 from core.db.mongo import connection
-from core.config import settings
 from core.errors import ImproperlyConfigured
 
-_database = connection.get_database(settings.MONGO_DATABASE_NAME)
+_database = connection.get_database("twin")
 
 logger = logger_utils.get_logger(__name__)
 
@@ -104,42 +104,73 @@ class BaseDocument(BaseModel):
 
         return cls.Settings.name
 
-class FinancialsDocument(BaseDocument):
-    company_name: str
-    form_type: str
-    content: str
-    quarter: str
+class EdgarFillingDocument(BaseDocument):
+    source: str
+    url: str
     date: str
+    ticker: str
+    content: str
 
     class Settings:
-        name = "financials"
+        name = "edgar_fillings"
 
-
-class Form4Document(BaseDocument):
-    company_name: str
-    form_type: str
-    content: str
-    quarter: str
+class EarningsCallTranscriptDocument(BaseDocument):
+    source: str
+    url: str
     date: str
-    class Settings:
-        name = "form4"
-
-
-class NewsDocument(BaseDocument):
-    company_name: str
-    form_type: str
     content: str
-    quarter: str
-    date: str
+    
     class Settings:
-        name = "news"
+        name = "earnings_call_transcripts"
 
-
-class ProxyDocument(BaseDocument):
-    company_name: str
-    form_type: str
-    content: str
-    quarter: str
-    date: str
+# Bloomberg, InvestopediaPersonalFiance, YahooFinance, etc.
+class FinancialNewsDocument(BaseDocument):
+    source: str
+    title: str
+    link: str | None
+    summary: str | None
+    date: str | None
     class Settings:
-        name = "proxies"
+        name = "financial_news"
+
+# Investopedia Financial Terms Document
+
+class Section(BaseModel):
+    heading: str
+    text: Optional[str] = None
+    list: Optional[List[str]] = None
+
+class Content(BaseModel):
+    title: str
+    sections: List[Section]
+
+class Metadata(BaseModel):
+    source: str
+    author: Optional[str] = None
+    last_updated: Optional[str] = None  # Consider using datetime if the format is consistent
+    platform: str
+    tags: Optional[List[str]] = None
+
+class InvestopediaTermsDocument(BaseDocument):
+    term: str
+    url: str
+    definition: str
+    content: Content
+    metadata: Metadata
+    crawled_at: datetime = Field(default_factory=datetime.utcnow)
+
+    class Settings:
+        name = "investopedia"
+
+# Macro-economic Reports (FOMC transcripts, the Beige Book, etc.)
+class MacroEconomicReportDocument(BaseDocument):
+    date: datetime
+    type: str
+    content: Content
+    metadata: Metadata
+    crawled_at: datetime = Field(default_factory=datetime.utcnow)
+
+    class Settings:
+        name = "macro_economic_reports"
+
+# Industry Research Reports from Delloitte, PWC, EY, etc.

@@ -1,87 +1,113 @@
 import opik
-from config import settings
+from core.config import settings
 from langchain_openai import ChatOpenAI
 from opik.integrations.langchain import OpikTracer
 from groq import Groq
+from datetime import datetime, timedelta
+from typing import Dict, Any, Optional, Tuple
 
 import core.logger_utils as logger_utils
 from core import lib
-from core.db.documents import UserDocument
 from core.rag.prompt_templates import SelfQueryTemplate
+
+import os
 
 logger = logger_utils.get_logger(__name__)
 
-
 class SelfQuery:
     opik_tracer = OpikTracer(tags=["SelfQuery"])
-
-    @staticmethod
-    @opik.track(name="SelQuery.generate_response")
-    def generate_response(query: str) -> str | None:
-        prompt = SelfQueryTemplate().create_template()
-        model = ChatOpenAI(
-            model=settings.OPENAI_MODEL_ID,
-            api_key=settings.OPENAI_API_KEY,
-            temperature=0,
-        )
-        chain = prompt | model
-        chain = chain.with_config({"callbacks": [SelfQuery.opik_tracer]})
-
-        response = chain.invoke({"question": query})
-        response = response.content
-        user_full_name = response.strip("\n ")
-
-        if user_full_name == "none":
-            return None
-
-        logger.info(
-            f"Successfully extracted the user full name from the query.",
-            user_full_name=user_full_name,
-        )
-        first_name, last_name = lib.split_user_full_name(user_full_name)
-        logger.info(
-            f"Successfully extracted the user first and last name from the query.",
-            first_name=first_name,
-            last_name=last_name,
-        )
-        user_id = UserDocument.get_or_create(first_name=first_name, last_name=last_name)
-
-        return user_id
-
-    @staticmethod
-    @opik.track(name="SelQuery.generate_response_groq")
-    def generate_response_groq(query: str) -> str | None:
-        prompt = SelfQueryTemplate().create_template()
-        prompt_content = prompt.format(question=query)
+    
+    # Date range keywords mapping
+    DATE_RANGE_KEYWORDS = {
+        # Recent time periods
+        "recent": {"days": 7},
+        "latest": {"days": 7},
+        "current": {"days": 7},
+        "today": {"days": 1},
+        "yesterday": {"days": 1},
         
-        client = Groq(api_key=settings.GROQ_API_KEY)
-        response = client.chat.completions.create(
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt_content,
-                }
-            ],
-            model=settings.GROQ_MODEL_ID,
-            temperature=0,
-        )
-        content = response.choices[0].message.content
-        user_full_name = content.strip("\n ")
+        # Weekly periods
+        "last week": {"days": 7},
+        "this week": {"start": "current_week"},
+        "past week": {"days": 7},
+        
+        # Monthly periods
+        "last month": {"days": 30},
+        "this month": {"start": "current_month"},
+        "past month": {"days": 30},
+        "month_to_date": {"start": "current_month"},
+        
+        # Quarterly periods
+        "last quarter": {"days": 90},
+        "this quarter": {"start": "current_quarter"},
+        "past quarter": {"days": 90},
+        "quarter_to_date": {"start": "current_quarter"},
+        
+        # Yearly periods
+        "last year": {"days": 365},
+        "this year": {"start": "current_year"},
+        "past year": {"days": 365},
+        "year_to_date": {"start": "current_year"},
+        "ytd": {"start": "current_year"},
+        
+        # Custom periods
+        "last 6 months": {"days": 180},
+        "last 3 months": {"days": 90},
+        "last 2 years": {"days": 730},
+        "last 5 years": {"days": 1825}
+    }
 
-        if user_full_name == "none":
-            return None
+    @staticmethod
+    def _extract_date_range(query: str) -> Optional[Dict[str, str]]:
+        """Extract date range from query text."""
+        query_lower = query.lower()
+        today = datetime.now()
+        
+        for keyword, range_info in SelfQuery.DATE_RANGE_KEYWORDS.items():
+            if keyword in query_lower:
+                if "days" in range_info:
+                    end_date = today.strftime("%Y-%m-%d")
+                    start_date = (today - timedelta(days=range_info["days"])).strftime("%Y-%m-%d")
+                    return {"start_date": start_date, "end_date": end_date}
+                elif "start" in range_info:
+                    if range_info["start"] == "current_year":
+                        return {"start_date": f"{today.year}-01-01", "end_date": today.strftime("%Y-%m-%d")}
+                    elif range_info["start"] == "current_month":
+                        return {"start_date": f"{today.year}-{today.month:02d}-01", "end_date": today.strftime("%Y-%m-%d")}
+                    elif range_info["start"] == "current_quarter":
+                        quarter_start = ((today.month - 1) // 3) * 3 + 1
+                        return {"start_date": f"{today.year}-{quarter_start:02d}-01", "end_date": today.strftime("%Y-%m-%d")}
+                    elif range_info["start"] == "current_week":
+                        # Get the start of the current week (Monday)
+                        start_of_week = today - timedelta(days=today.weekday())
+                        return {"start_date": start_of_week.strftime("%Y-%m-%d"), "end_date": today.strftime("%Y-%m-%d")}
+        
+        return None
 
-        logger.info(
-            f"Successfully extracted the user full name from the query.",
-            user_full_name=user_full_name,
-        )
-        first_name, last_name = lib.split_user_full_name(user_full_name)
-        logger.info(
-            f"Successfully extracted the user first and last name from the query.",
-            first_name=first_name,
-            last_name=last_name,
-        )
-        user_id = UserDocument.get_or_create(first_name=first_name, last_name=last_name)
-
-        return user_id
+    @staticmethod
+    @opik.track(name="SelfQuery.extract_metadata")
+    def extract_metadata(query: str) -> Dict[str, Any]:
+        """Extract date range from query text and append to query if found."""
+        try:
+            date_range = SelfQuery._extract_date_range(query)
+            
+            if date_range:
+                date_context = f" between {date_range['start_date']} and {date_range['end_date']}"
+                query = query + date_context
+                logger.info(
+                    "Added date range to query",
+                    query=query,
+                    date_range=date_range
+                )
+            
+            return {
+                "modified_query": query,
+                "date_range": date_range
+            }
+        except Exception as e:
+            logger.error(f"Error extracting date range: {str(e)}")
+            return {
+                "modified_query": query,
+                "date_range": None
+            }
                 

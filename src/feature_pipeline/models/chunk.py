@@ -1,33 +1,69 @@
-from typing import Optional
+from typing import Optional, List
+from datetime import datetime
+from pydantic import BaseModel, Field
 
 from models.base import DataModel
 
-
-class PostChunkModel(DataModel):
+class EdgarFillingChunkModel(DataModel):
     entry_id: str
+    source: str
+    url: str
+    date: str
+    ticker: str
+    chunk_id: str
+    chunk_content: str
+
+
+class EarningsCallTranscriptChunkModel(DataModel):
+    entry_id: str
+    source: str
+    url: str
+    date: str
+    chunk_id: str
+    chunk_content: str
+
+
+class FinancialNewsChunkModel(DataModel):
+    entry_id: str
+    source: str
+    title: str
+    link: Optional[str]
+    chunk_id: str
+    chunk_content: str
+    date: Optional[str]
+
+class Section(BaseModel):
+    heading: str
+    text: Optional[str] = None
+    list: Optional[List[str]] = None
+
+
+class Content(BaseModel):
+    title: str
+    sections: List[Section]
+
+
+class Metadata(BaseModel):
+    source: str
+    author: Optional[str] = None
+    last_updated: Optional[str] = None
     platform: str
-    chunk_id: str
-    chunk_content: str
-    author_id: str
-    image: Optional[str] = None
-    type: str
+    tags: Optional[List[str]] = None
 
 
-class ArticleChunkModel(DataModel):
+class InvestopediaTermsChunkModel(DataModel):
     entry_id: str
-    platform: str
-    link: str
+    term: str
+    url: str
+    definition: str
     chunk_id: str
     chunk_content: str
-    author_id: str
-    type: str
+    crawled_at: datetime = Field(default_factory=datetime.utcnow)
 
 
-class RepositoryChunkModel(DataModel):
+class MacroEconomicReportChunkModel(DataModel):
     entry_id: str
-    name: str
-    link: str
+    date: datetime
     chunk_id: str
     chunk_content: str
-    owner_id: str
-    type: str
+    crawled_at: datetime = Field(default_factory=datetime.utcnow)

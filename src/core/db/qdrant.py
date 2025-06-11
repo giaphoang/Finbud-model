@@ -12,15 +12,9 @@ class QdrantDatabaseConnector:
 
     def __init__(self) -> None:
         if self._instance is None:
-            if settings.USE_QDRANT_CLOUD:
                 self._instance = QdrantClient(
                     url=settings.QDRANT_CLOUD_URL,
-                    api_key=settings.QDRANT_APIKEY,
-                )
-            else:
-                self._instance = QdrantClient(
-                    host=settings.QDRANT_DATABASE_HOST,
-                    port=settings.QDRANT_DATABASE_PORT,
+                api_key=settings.QDRANT_APIKEY
                 )
 
     def get_collection(self, collection_name: str):
@@ -28,7 +22,8 @@ class QdrantDatabaseConnector:
 
     def create_non_vector_collection(self, collection_name: str):
         self._instance.create_collection(
-            collection_name=collection_name, vectors_config={}
+            collection_name=collection_name,
+            vectors_config={"dummy": VectorParams(size=1, distance=Distance.COSINE)},
         )
 
     def create_vector_collection(self, collection_name: str):
@@ -44,7 +39,6 @@ class QdrantDatabaseConnector:
             self._instance.upsert(collection_name=collection_name, points=points)
         except Exception:
             logger.exception("An error occurred while inserting data.")
-
             raise
 
     def search(
@@ -67,5 +61,4 @@ class QdrantDatabaseConnector:
     def close(self):
         if self._instance:
             self._instance.close()
-
             logger.info("Connected to database has been closed.")

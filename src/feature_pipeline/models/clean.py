@@ -1,63 +1,122 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
+from datetime import datetime
+from pydantic import BaseModel, Field
 
 from models.base import VectorDBDataModel
 
-
-class PostCleanedModel(VectorDBDataModel):
+class EdgarFillingCleanedModel(VectorDBDataModel):
     entry_id: str
-    platform: str
+    source: str
+    url: str
+    date: str
+    ticker: str
     cleaned_content: str
-    author_id: str
-    image: Optional[str] = None
     type: str
 
     def to_payload(self) -> Tuple[str, dict]:
         data = {
-            "platform": self.platform,
-            "author_id": self.author_id,
+            "source": self.source,
+            "url": self.url,
+            "date": self.date,
+            "ticker": self.ticker,
             "cleaned_content": self.cleaned_content,
-            "image": self.image,
             "type": self.type,
         }
 
         return self.entry_id, data
 
-
-class ArticleCleanedModel(VectorDBDataModel):
+class EarningsCallTranscriptCleanedModel(VectorDBDataModel):
     entry_id: str
-    platform: str
-    link: str
+    source: str
+    url: str
+    date: str
     cleaned_content: str
-    author_id: str
     type: str
-
+    
     def to_payload(self) -> Tuple[str, dict]:
         data = {
-            "platform": self.platform,
-            "link": self.link,
+            "source": self.source,
+            "url": self.url,
+            "date": self.date,
             "cleaned_content": self.cleaned_content,
-            "author_id": self.author_id,
             "type": self.type,
         }
 
         return self.entry_id, data
 
-
-class RepositoryCleanedModel(VectorDBDataModel):
+class FinancialNewsCleanedModel(VectorDBDataModel):
     entry_id: str
-    name: str
-    link: str
-    cleaned_content: str
-    owner_id: str
+    source: str
+    title: str
+    link: Optional[str]
+    cleaned_content: Optional[str]
+    date: Optional[str]
     type: str
 
     def to_payload(self) -> Tuple[str, dict]:
         data = {
-            "name": self.name,
+            "source": self.source,
+            "title": self.title,
             "link": self.link,
             "cleaned_content": self.cleaned_content,
-            "owner_id": self.owner_id,
-            "type": self.type,
+            "date": self.date,
+            "type": self.type
         }
+        return self.entry_id, data
 
+class Section(BaseModel):
+    heading: str
+    text: Optional[str] = None
+    list: Optional[List[str]] = None
+
+class Content(BaseModel):
+    title: str
+    sections: List[Section]
+
+class Section(BaseModel):
+    heading: str
+    text: Optional[str] = None
+    list: Optional[List[str]] = None
+
+class Metadata(BaseModel):
+    source: str
+    author: Optional[str] = None
+    last_updated: Optional[str] = None
+    platform: str
+    tags: Optional[List[str]] = None
+
+class InvestopediaTermsCleanedModel(VectorDBDataModel):
+    entry_id: str
+    term: str
+    url: str
+    definition: str
+    cleaned_content: str
+    crawled_at: datetime = Field(default_factory=datetime.utcnow)
+    type: str
+
+    def to_payload(self) -> Tuple[str, dict]:
+        data = {
+            "term": self.term,
+            "url": self.url,
+            "definition": self.definition,
+            "cleaned_content": self.cleaned_content,
+            "crawled_at": self.crawled_at,
+            "type": self.type
+        }
+        return self.entry_id, data
+
+class MacroEconomicReportCleanedModel(VectorDBDataModel):
+    entry_id: str
+    date: datetime
+    type: str
+    cleaned_content: str
+    crawled_at: datetime = Field(default_factory=datetime.utcnow)
+
+    def to_payload(self) -> Tuple[str, dict]:
+        data = {
+            "date": self.date,
+            "type": self.type,
+            "cleaned_content": self.cleaned_content,
+            "crawled_at": self.crawled_at
+        }
         return self.entry_id, data
