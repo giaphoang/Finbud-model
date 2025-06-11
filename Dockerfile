@@ -7,10 +7,14 @@ WORKDIR /app
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     make \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Poetry
-RUN pip install poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
+
+# Add Poetry to PATH
+ENV PATH="/root/.local/bin:$PATH"
 
 # Copy poetry configuration files
 COPY pyproject.toml poetry.lock ./
@@ -18,8 +22,8 @@ COPY pyproject.toml poetry.lock ./
 # Configure poetry to not create a virtual environment
 RUN poetry config virtualenvs.create false
 
-# Install dependencies
-RUN poetry install --no-dev --no-interaction --no-ansi
+# Install dependencies with verbose output
+RUN poetry install --no-dev --no-interaction --no-ansi -v
 
 # Copy the rest of the application
 COPY . .
