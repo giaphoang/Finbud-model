@@ -15,3 +15,11 @@ services:
         sync: false 
       - key: USE_QDRANT_CLOUD
         sync: false
+    # Add health check path
+    healthCheckPath: /api/health
+    # Enable auto-deploy from main branch
+    autoDeploy: true
+    # Add scaling configuration
+    scaling:
+      minInstances: 1
+      maxInstances: 1

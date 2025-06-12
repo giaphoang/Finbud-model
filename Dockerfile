@@ -27,13 +27,16 @@ RUN poetry config virtualenvs.create false
 
 # Generate lock file and install dependencies
 RUN poetry lock && \
-    poetry install --without dev --no-interaction --no-ansi -v
+    poetry install --without dev --no-interaction --no-ansi -v --no-root
 
 # Copy the rest of the application
 COPY . .
 
+# Set PYTHONPATH to include src directory
+ENV PYTHONPATH=/app
+
 # Expose the port the app runs on
 EXPOSE 8000
 
-# Command to run the application
-CMD ["poetry", "run", "python", "src/backend/api/main.py"] 
+# Command to run the application using uvicorn
+CMD ["poetry", "run", "uvicorn", "src.backend.api.main:app", "--host", "0.0.0.0", "--port", "8000"] 
