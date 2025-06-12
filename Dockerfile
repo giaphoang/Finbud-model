@@ -32,11 +32,11 @@ RUN poetry lock && \
 # Copy the rest of the application
 COPY . .
 
-# Set PYTHONPATH to include src directory
-ENV PYTHONPATH=/app
+# Set PYTHONPATH to include both src and root directory
+ENV PYTHONPATH=/app:/app/src
 
 # Expose the port the app runs on
 EXPOSE 8000
 
 # Command to run the application using uvicorn
-CMD ["poetry", "run", "uvicorn", "src.backend.api.main:app", "--host", "0.0.0.0", "--port", "8000"] 
+CMD ["poetry", "run", "uvicorn", "backend.api.main:app", "--host", "0.0.0.0", "--port", "8000"] 
