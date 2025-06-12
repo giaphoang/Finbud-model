@@ -13,3 +13,5 @@ services:
         sync: false
       - key: QDRANT_APIKEY
         sync: false 
+      - key: USE_QDRANT_CLOUD
+        sync: false

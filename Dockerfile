@@ -20,13 +20,14 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 ENV PATH="/root/.local/bin:$PATH"
 
 # Copy poetry configuration files
-COPY pyproject.toml poetry.lock ./
+COPY pyproject.toml ./
 
 # Configure poetry to not create a virtual environment
 RUN poetry config virtualenvs.create false
 
-# Install dependencies with verbose output
-RUN poetry install --without dev --no-interaction --no-ansi -v
+# Generate lock file and install dependencies
+RUN poetry lock --no-update && \
+    poetry install --without dev --no-interaction --no-ansi -v
 
 # Copy the rest of the application
 COPY . .
