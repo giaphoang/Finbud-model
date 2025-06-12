@@ -26,7 +26,7 @@ COPY pyproject.toml ./
 RUN poetry config virtualenvs.create false
 
 # Generate lock file and install dependencies
-RUN poetry lock --no-update && \
+RUN poetry lock && \
     poetry install --without dev --no-interaction --no-ansi -v
 
 # Copy the rest of the application
