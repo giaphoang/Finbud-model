@@ -41,4 +41,4 @@ ENV PYTHONPATH=/app/src
 EXPOSE 8000
 
 # Start the FastAPI app using Uvicorn
-CMD ["poetry", "run", "uvicorn", "backend.api.main:app", "--host", "0.0.0.0", "--port", "8000"] 
+CMD poetry run uvicorn backend.api.main:app --host 0.0.0.0 --port $PORT
