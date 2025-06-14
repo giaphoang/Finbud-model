@@ -15,5 +15,4 @@ services:
         sync: false 
       - key: USE_QDRANT_CLOUD
         sync: false
-    healthCheckPath: /api/health
     autoDeploy: true
