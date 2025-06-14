@@ -34,5 +34,8 @@ COPY . .
 # Expose the port the app runs on
 EXPOSE 8000
 
+# Set PYTHONPATH so modules like 'core' can be found
+ENV PYTHONPATH=/app/src
+
 # Command to run the application
 CMD ["poetry", "run", "python", "src/backend/api/main.py"] 
