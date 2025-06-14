@@ -34,9 +34,11 @@ COPY . .
 # Set environment variables
 ENV PORT=8000
 ENV PYTHONUNBUFFERED=1
+# Add src directory to Python path
+ENV PYTHONPATH=/app/src
 
 # Expose the port the app runs on
-EXPOSE ${PORT}
+EXPOSE 8000
 
-# Command to run the application
-CMD ["poetry", "run", "python", "src/backend/api/main.py"] 
+# Start the FastAPI app using Uvicorn
+CMD ["poetry", "run", "uvicorn", "backend.api.main:app", "--host", "0.0.0.0", "--port", "8000"] 
