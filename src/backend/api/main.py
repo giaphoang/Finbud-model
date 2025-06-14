@@ -94,11 +94,8 @@ async def process_query(request: QueryRequest) -> Dict[str, List[str]]:
         )
 
 @app.get("/api/health")
-async def health_check() -> Dict[str, str]:
-    try:
-        return {"status": "ok"}
-    except Exception as e:
-        return {"status": "unhealthy", "qdrant_connection": "failed", "error": str(e)}
+def health_check() -> Dict[str, str]:
+    return {"status": "ok"}
 
 @app.get("/api/collection-types")
 async def get_collection_types() -> Dict[str, List[str]]:
