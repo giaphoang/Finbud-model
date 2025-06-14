@@ -28,15 +28,6 @@ app.add_middleware(
     max_age=3600,  # Cache preflight requests for 1 hour
 )
 
-# Add root endpoint for basic health check
-@app.get("/")
-async def root():
-    return {
-        "status": "ok",
-        "message": "Financial RAG Pipeline API is running",
-        "version": "1.0.0"
-    }
-
 class QueryRequest(BaseModel):
     query: str
     collection_type: Optional[str] = None

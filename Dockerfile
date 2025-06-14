@@ -1,5 +1,5 @@
-# Use Python 3.10 as base image
-FROM python:3.10-slim
+# Use Python 3.11 as base image
+FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
@@ -20,23 +20,19 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 ENV PATH="/root/.local/bin:$PATH"
 
 # Copy poetry configuration files
-COPY pyproject.toml ./
+COPY pyproject.toml poetry.lock ./
 
 # Configure poetry to not create a virtual environment
 RUN poetry config virtualenvs.create false
 
-# Generate lock file and install dependencies
-RUN poetry lock && \
-    poetry install --without dev --no-interaction --no-ansi -v --no-root
+# Install dependencies with verbose output and show full error messages
+RUN poetry install --without dev --no-interaction --no-ansi -v || (echo "Poetry install failed. Full error:" && poetry install --without dev --no-interaction --no-ansi -vvv)
 
 # Copy the rest of the application
 COPY . .
 
-# Set PYTHONPATH to include both src and root directory
-ENV PYTHONPATH=/app:/app/src
-
 # Expose the port the app runs on
 EXPOSE 8000
 
-# Command to run the application using uvicorn
-CMD ["poetry", "run", "uvicorn", "backend.api.main:app", "--host", "0.0.0.0", "--port", "8000"] 
+# Command to run the application
+CMD ["poetry", "run", "python", "src/backend/api/main.py"] 

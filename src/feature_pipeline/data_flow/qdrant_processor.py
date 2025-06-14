@@ -85,14 +85,22 @@ class QdrantProcessor:
         try:
             output.build(0, 1).write_batch(items)
         except Exception as e:
-            if "timeout" in str(e).lower() and retry_count < self.max_retries:
+            if retry_count < self.max_retries:
+                # Calculate exponential backoff delay
+                delay = self.retry_delay * (2 ** retry_count)
                 logger.warning(
-                    f"Timeout occurred, retrying... (Attempt {retry_count + 1}/{self.max_retries})",
-                    error=str(e)
+                    f"Write operation failed, retrying... (Attempt {retry_count + 1}/{self.max_retries})",
+                    error=str(e),
+                    delay=delay
                 )
-                time.sleep(self.retry_delay)
+                time.sleep(delay)
                 return self._write_with_retry(output, items, retry_count + 1)
             else:
+                logger.error(
+                    f"Max retries exceeded for write operation",
+                    error=str(e),
+                    items_count=len(items)
+                )
                 raise
 
     def process_collection(self, collection_name: str, data_type: str):
@@ -112,11 +120,14 @@ class QdrantProcessor:
             total_documents=total_docs
         )
         
+        # Process documents in smaller batches
+        batch_size = 25  # Reduced batch size to prevent timeouts
+        
         # Process documents in batches
         while total_processed < total_docs:
             try:
                 # Create a cursor with a smaller timeout and explicit batch size
-                cursor = collection.find().skip(total_processed).limit(self.batch_size).max_time_ms(60000)  # 1 minute timeout
+                cursor = collection.find().skip(total_processed).limit(batch_size).max_time_ms(30000)  # 30 second timeout
                 
                 batch_docs = list(cursor)  # Convert cursor to list immediately to avoid timeout issues
                 if not batch_docs:
@@ -148,24 +159,47 @@ class QdrantProcessor:
                         chunks = chunking_handler.chunk(cleaned_data)
                         
                         # Process chunks in smaller sub-batches
-                        chunk_batch_size = 10  # Process chunks in smaller batches
+                        chunk_batch_size = 5  # Reduced chunk batch size
                         for i in range(0, len(chunks), chunk_batch_size):
                             chunk_batch = chunks[i:i + chunk_batch_size]
                         
-                        # Embed chunks
-                        embedded_chunks = []
+                            # Embed chunks
+                            embedded_chunks = []
                             for chunk in chunk_batch:
-                            embedded_chunk = embedding_handler.embedd(chunk)
-                            embedded_chunks.append(embedded_chunk)
-                        
-                            # Store embedded chunks with retry
-                        if embedded_chunks:
-                                self._write_with_retry(self.vector_output, embedded_chunks)
+                                try:
+                                    embedded_chunk = embedding_handler.embedd(chunk)
+                                    embedded_chunks.append(embedded_chunk)
+                                except Exception as e:
+                                    logger.error(
+                                        f"Error embedding chunk",
+                                        error=str(e),
+                                        doc_id=doc.get('entry_id'),
+                                        chunk_id=chunk.chunk_id
+                                    )
+                                    continue
+                            
+                            # Store embedded chunks with retry, but in smaller batches
+                            if embedded_chunks:
+                                # Split into even smaller batches for Qdrant writes
+                                qdrant_batch_size = 3  # Very small batch size for Qdrant writes
+                                for j in range(0, len(embedded_chunks), qdrant_batch_size):
+                                    qdrant_batch = embedded_chunks[j:j + qdrant_batch_size]
+                                    try:
+                                        self._write_with_retry(self.vector_output, qdrant_batch)
+                                    except Exception as e:
+                                        logger.error(
+                                            f"Failed to write batch to Qdrant after retries",
+                                            error=str(e),
+                                            doc_id=doc.get('entry_id'),
+                                            batch_size=len(qdrant_batch)
+                                        )
+                                        # Continue processing other batches even if one fails
+                                        continue
                         
                         total_processed += 1
                         
-                        # Log progress periodically (every 100 documents)
-                        if total_processed % 100 == 0:
+                        # Log progress more frequently (every 50 documents)
+                        if total_processed % 50 == 0:
                             progress = (total_processed / total_docs) * 100
                             logger.info(
                                 f"Processed {total_processed} documents. "
@@ -179,7 +213,7 @@ class QdrantProcessor:
                         logger.error(
                             f"Error processing document",
                             error=str(e),
-                            doc_id=doc.get('_id'),
+                            doc_id=doc.get('entry_id'),
                             collection=collection_name
                         )
                         continue
