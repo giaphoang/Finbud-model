@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 import os
+import datetime
 
 import core.logger_utils as logger_utils
 
@@ -94,8 +95,21 @@ async def process_query(request: QueryRequest) -> Dict[str, List[str]]:
         )
 
 @app.get("/api/health")
-def health_check() -> Dict[str, str]:
-    return {"status": "ok"}
+async def health_check() -> Dict[str, str]:
+    try:
+        # Basic health check without Qdrant connection
+        return {
+            "status": "healthy",
+            "api": "ok",
+            "timestamp": str(datetime.datetime.now())
+        }
+    except Exception as e:
+        logger.error(f"Health check failed: {str(e)}")
+        return {
+            "status": "degraded",
+            "api": "ok",
+            "error": str(e)
+        }
 
 @app.get("/api/collection-types")
 async def get_collection_types() -> Dict[str, List[str]]:
