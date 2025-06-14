@@ -9,8 +9,8 @@ class AppSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=ROOT_DIR, env_file_encoding="utf-8")
 
     # MongoDB configs
-    MONGO_DATABASE_URI: str = "mongodb+srv://giaptomhoang:mMmbProbiaB0bI3a@finbud-model.w2otx5f.mongodb.net/?retryWrites=true&w=majority&appName=Finbud-model"
-    MONGO_DATABASE_NAME: str = "twin"
+    MONGO_DATABASE_URI: str = "mongodb+srv://ducleanh2005:123Tienlen!123@ducle.wfkzpoe.mongodb.net/?retryWrites=true&w=majority&appName=ducle"
+    MONGO_DATABASE_NAME: str = "ducle"
 
     # MQ config
     RABBITMQ_DEFAULT_USERNAME: str = "guest"

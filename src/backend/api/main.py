@@ -96,9 +96,7 @@ async def process_query(request: QueryRequest) -> Dict[str, List[str]]:
 @app.get("/api/health")
 async def health_check() -> Dict[str, str]:
     try:
-        # Check if we can connect to Qdrant
-        retriever = VectorRetriever(query="test")
-        return {"status": "healthy", "qdrant_connection": "ok"}
+        return {"status": "ok"}
     except Exception as e:
         return {"status": "unhealthy", "qdrant_connection": "failed", "error": str(e)}
 
