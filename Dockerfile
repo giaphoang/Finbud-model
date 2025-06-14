@@ -25,8 +25,8 @@ COPY pyproject.toml poetry.lock ./
 # Configure poetry to not create a virtual environment
 RUN poetry config virtualenvs.create false
 
-# Install dependencies with verbose output and show full error messages
-RUN poetry install --without dev --no-interaction --no-ansi -v || (echo "Poetry install failed. Full error:" && poetry install --without dev --no-interaction --no-ansi -vvv)
+# Install dependencies
+RUN poetry install --without superlinked_rag --no-interaction --no-ansi -v
 
 # Copy the rest of the application
 COPY . .
