@@ -40,4 +40,8 @@ ENV PYTHONPATH=/app/src
 EXPOSE 8000
 
 # Create a shell script to run the application
-CMD poetry run uvicorn src.backend.api.main:app --host 0.0.0.0 --port $PORT
+RUN echo '#!/bin/sh\npoetry run uvicorn src.backend.api.main:app --host 0.0.0.0 --port $PORT' > /app/start.sh && \
+    chmod +x /app/start.sh
+
+# Start the FastAPI app using Uvicorn
+CMD ["/app/start.sh"]
