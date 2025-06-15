@@ -32,17 +32,12 @@ RUN poetry install --without superlinked_rag --no-interaction --no-ansi -v
 COPY . .
 
 # Set environment variables
-ENV PORT=8000
 ENV PYTHONUNBUFFERED=1
 # Add src directory to Python path
 ENV PYTHONPATH=/app/src
 
 # Expose the port the app runs on
-EXPOSE ${PORT}
+EXPOSE 8000
 
 # Create a shell script to run the application
-RUN echo '#!/bin/sh\npoetry run uvicorn src.backend.api.main:app --host 0.0.0.0 --port $PORT' > /app/start.sh && \
-    chmod +x /app/start.sh
-
-# Start the FastAPI app using Uvicorn
-CMD ["/app/start.sh"]
+CMD poetry run uvicorn backend.api.main:app --host 0.0.0.0 --port $PORT
