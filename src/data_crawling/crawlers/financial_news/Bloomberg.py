@@ -5,7 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from crawlers.base import BaseAbstractCrawler
-from core.db.documents import BloombergDocument
+from core.db.documents import FinancialNewsDocument
 
 
 class BloombergCrawler(BaseAbstractCrawler):
@@ -14,7 +14,7 @@ class BloombergCrawler(BaseAbstractCrawler):
     Collects: headline, link
     """
 
-    model = BloombergDocument
+    model = FinancialNewsDocument
 
     def __init__(self, scroll_limit: int = 2):
         super().__init__(scroll_limit=scroll_limit)
@@ -43,12 +43,12 @@ class BloombergCrawler(BaseAbstractCrawler):
 
             
 
-                doc = BloombergDocument(
+                doc = self.modelt(
                     source="bloomberg",
                     title=title,
                     link=link,
                     summary=None,
-                    publish_date=None
+                    date=None
                 )
                 doc.save()
                 print(f"[Bloomberg] Saved: {title}")

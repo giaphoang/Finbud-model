@@ -55,6 +55,9 @@ local-ingest-data: # Ingest all links from data/links.txt by calling your local 
 local-test-retriever: # Test the RAG retriever using your Poetry env
 	cd src/feature_pipeline && poetry run python -m retriever
 
+local-run-qdrant-processor: # Run the batch processor to migrate data from MongoDB to Qdrant Cloud
+	cd src/feature_pipeline && set PYTHONPATH=..\.. && poetry run python -m run_upload_to_qdrant
+
 local-generate-instruct-dataset: # Generate the fine-tuning instruct dataset using your Poetry env.
 	cd src/feature_pipeline && poetry run python -m generate_dataset.generate
 
@@ -120,3 +123,39 @@ local-bytewax-superlinked: # Run the Bytewax streaming pipeline powered by Super
 
 local-test-retriever-superlinked: # Call the retrieval module and query the Superlinked server & vector DB
 	docker exec -it llm-twin-bytewax-superlinked python -m retriever
+
+# ======================================
+# ---------- Backend API --------------
+# ======================================
+
+local-start-api: # Start the FastAPI backend server
+	cd src/backend/api && set PYTHONPATH=..\..\.. && poetry run uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+local-test-api: # Run the API tests
+	cd src/backend/api && set PYTHONPATH=..\..\.. && poetry run python test_api.py
+
+local-check-collections: # Check Qdrant collections
+	cd src/backend/api && set PYTHONPATH=..\..\.. && poetry run python -c "from core.db.qdrant import QdrantDatabaseConnector; client = QdrantDatabaseConnector(); print('Collections:', [c.name for c in client._instance.get_collections().collections])"
+
+# Docker commands
+docker-build:
+	docker build -t finbud-api .
+
+docker-run:
+	docker run -p 8000:8000 \
+		-e OPENAI_API_KEY=$(OPENAI_API_KEY) \
+		-e OPENAI_MODEL_ID=$(OPENAI_MODEL_ID) \
+		-e QDRANT_CLOUD_URL=$(QDRANT_CLOUD_URL) \
+		-e QDRANT_APIKEY=$(QDRANT_APIKEY) \
+		finbud-api
+
+docker-compose-up:
+	docker-compose up --build
+
+docker-compose-down:
+	docker-compose down
+
+# Deployment commands
+deploy-local: docker-build docker-run
+
+deploy-docker-compose: docker-compose-up

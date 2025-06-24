@@ -1,17 +1,26 @@
 from abc import ABC, abstractmethod
-
+from typing import Any
 from models.base import DataModel
-from models.chunk import ArticleChunkModel, PostChunkModel, RepositoryChunkModel, YahooChunkModel, BloombergChunkModel, InvestopediaPersonalFinanceChunkModel
+from models.chunk import (
+    EdgarFillingChunkModel,
+    EarningsCallTranscriptChunkModel,
+    FinancialNewsChunkModel,
+    InvestopediaTermsChunkModel,
+    MacroEconomicReportChunkModel,
+    YahooChunkModel,
+    InvestopediaPersonalFinanceChunkModel
+)
 from models.embedded_chunk import (
-    ArticleEmbeddedChunkModel,
-    PostEmbeddedChunkModel,
-    RepositoryEmbeddedChunkModel,
+    EdgarFillingEmbeddedChunkModel,
+    EarningsCallTranscriptEmbeddedChunkModel,
+    FinancialNewsEmbeddedChunkModel,
+    InvestopediaTermsEmbeddedChunkModel,
+    MacroEconomicReportEmbeddedChunkModel,
     YahooEmbeddedChunkModel,
-    BloombergEmbeddedChunkModel,
     InvestopediaPersonalFinanceEmbeddedChunkModel
+ 
 )
 from utils.embeddings import embedd_text
-
 
 class EmbeddingDataHandler(ABC):
     """
@@ -23,45 +32,71 @@ class EmbeddingDataHandler(ABC):
     def embedd(self, data_model: DataModel) -> DataModel:
         pass
 
-
-class PostEmbeddingHandler(EmbeddingDataHandler):
-    def embedd(self, data_model: PostChunkModel) -> PostEmbeddedChunkModel:
-        return PostEmbeddedChunkModel(
+class EdgarFillingEmbeddingHandler(EmbeddingDataHandler):
+    def embedd(self, data_model: EdgarFillingChunkModel) -> EdgarFillingEmbeddedChunkModel:
+        return EdgarFillingEmbeddedChunkModel(
             entry_id=data_model.entry_id,
-            platform=data_model.platform,
+            type=data_model.type,
+            source=data_model.source,
+            url=data_model.url,
+            date=data_model.date,
+            ticker=data_model.ticker,
             chunk_id=data_model.chunk_id,
             chunk_content=data_model.chunk_content,
-            embedded_content=embedd_text(data_model.chunk_content),
-            author_id=data_model.author_id,
-            type=data_model.type,
+            embedded_content=embedd_text(data_model.chunk_content)
         )
 
-
-class ArticleEmbeddingHandler(EmbeddingDataHandler):
-    def embedd(self, data_model: ArticleChunkModel) -> ArticleEmbeddedChunkModel:
-        return ArticleEmbeddedChunkModel(
+class EarningsCallTranscriptEmbeddingHandler(EmbeddingDataHandler):
+    def embedd(self, data_model: EarningsCallTranscriptChunkModel) -> EarningsCallTranscriptEmbeddedChunkModel:
+        return EarningsCallTranscriptEmbeddedChunkModel(
             entry_id=data_model.entry_id,
-            platform=data_model.platform,
-            link=data_model.link,
-            chunk_content=data_model.chunk_content,
-            chunk_id=data_model.chunk_id,
-            embedded_content=embedd_text(data_model.chunk_content),
-            author_id=data_model.author_id,
             type=data_model.type,
+            source=data_model.source,
+            url=data_model.url,
+            date=data_model.date,
+            chunk_id=data_model.chunk_id,
+            chunk_content=data_model.chunk_content,
+            embedded_content=embedd_text(data_model.chunk_content)
         )
 
-
-class RepositoryEmbeddingHandler(EmbeddingDataHandler):
-    def embedd(self, data_model: RepositoryChunkModel) -> RepositoryEmbeddedChunkModel:
-        return RepositoryEmbeddedChunkModel(
+class FinancialNewsEmbeddingHandler(EmbeddingDataHandler):
+    def embedd(self, data_model: FinancialNewsChunkModel) -> FinancialNewsEmbeddedChunkModel:
+        return FinancialNewsEmbeddedChunkModel(
             entry_id=data_model.entry_id,
-            name=data_model.name,
+            type=data_model.type,
+            source=data_model.source,
+            title=data_model.title,
             link=data_model.link,
+            date=data_model.date,
             chunk_id=data_model.chunk_id,
             chunk_content=data_model.chunk_content,
-            embedded_content=embedd_text(data_model.chunk_content),
-            owner_id=data_model.owner_id,
+            embedded_content=embedd_text(data_model.chunk_content)
+        )
+
+class InvestopediaTermsEmbeddingHandler(EmbeddingDataHandler):
+    def embedd(self, data_model: InvestopediaTermsChunkModel) -> InvestopediaTermsEmbeddedChunkModel:
+        return InvestopediaTermsEmbeddedChunkModel(
+            entry_id=data_model.entry_id,
             type=data_model.type,
+            term=data_model.term,
+            url=data_model.url,
+            definition=data_model.definition,
+            crawled_at=data_model.crawled_at,
+            chunk_id=data_model.chunk_id,
+            chunk_content=data_model.chunk_content,
+            embedded_content=embedd_text(data_model.chunk_content)
+        )
+
+class MacroEconomicReportEmbeddingHandler(EmbeddingDataHandler):
+    def embedd(self, data_model: MacroEconomicReportChunkModel) -> MacroEconomicReportEmbeddedChunkModel:
+        return MacroEconomicReportEmbeddedChunkModel(
+            entry_id=data_model.entry_id,
+            type=data_model.type,
+            date=data_model.date,
+            chunk_id=data_model.chunk_id,
+            chunk_content=data_model.chunk_content,
+            crawled_at=data_model.crawled_at,
+            embedded_content=embedd_text(data_model.chunk_content)
         )
 
 
@@ -79,18 +114,6 @@ class YahooEmbeddingHandler(EmbeddingDataHandler):
         )
 
 
-class BloombergEmbeddingHandler(EmbeddingDataHandler):
-    def embedd(self, data_model: BloombergChunkModel) -> BloombergEmbeddedChunkModel:
-        return BloombergEmbeddedChunkModel(
-            entry_id=data_model.entry_id,
-            platform=data_model.platform,
-            link=data_model.link,
-            chunk_content=data_model.chunk_content,
-            chunk_id=data_model.chunk_id,
-            embedded_content=embedd_text(data_model.chunk_content),
-            author_id=data_model.author_id,
-            type=data_model.type,
-        )
 
 class InvestopediaPersonalFinanceEmbeddingHandler(EmbeddingDataHandler):
     def embedd(self, data_model: InvestopediaPersonalFinanceChunkModel) -> InvestopediaPersonalFinanceEmbeddedChunkModel:

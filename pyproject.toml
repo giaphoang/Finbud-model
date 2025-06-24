@@ -50,7 +50,6 @@ huggingface-hub = "0.25.1"
 sagemaker = ">=2.232.2"
 sentence-transformers = "^2.2.2"
 gradio = "^5.5.0"
-groq = "^0.25.0"
 
 [tool.poetry.group.feature_pipeline.dependencies]
 bytewax = "0.18.2"

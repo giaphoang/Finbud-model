@@ -1,3 +1,4 @@
+
 import time
 from bs4 import BeautifulSoup
 import requests
@@ -7,7 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from crawlers.base import BaseAbstractCrawler
-from core.db.documents import YahooFinanceDocument
+from core.db.documents import FinancialNewsDocument
 
 logger = Logger(service="llm-twin-course/crawler")
 
@@ -17,7 +18,7 @@ class YahooFinanceCrawler(BaseAbstractCrawler):
     Collects: headline, link, summary snippet (if any)
     """
 
-    model = YahooFinanceDocument
+    model = FinancialNewsDocument
 
     def __init__(self, scroll_limit: int = 3):
         super().__init__(scroll_limit=scroll_limit)
@@ -43,7 +44,8 @@ class YahooFinanceCrawler(BaseAbstractCrawler):
             try:
                 anchor = elem.find_element(By.CSS_SELECTOR, "a")
                 link = anchor.get_attribute("href")
-                title = elem.find_element(By.CSS_SELECTOR, "h3.clamp").text.strip()
+                h3_elem = elem.find_element(By.TAG_NAME, "h3")
+                title = h3_elem.text.strip()
 
                 summary = ""
                 try:
@@ -55,12 +57,12 @@ class YahooFinanceCrawler(BaseAbstractCrawler):
                     summary = None
                 
 
-                doc = YahooFinanceDocument(
+                doc = self.model(
                     source="yahoo",
                     title=title,
                     link=link,
                     summary=summary,
-                    publish_date=None
+                    date=None
                 )
                 doc.save()
                 print(f"[Yahoo] Saved: {title}")

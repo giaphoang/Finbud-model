@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 
 from aws_lambda_powertools import Logger
-from core.db.documents import InvestopediaDocument
+from core.db.documents import InvestopediaTermsDocument
 from langchain_community.document_loaders import AsyncHtmlLoader
 from langchain_community.document_transformers.html2text import Html2TextTransformer
 
@@ -14,7 +14,7 @@ logger = Logger(service="llm-twin-course/crawler")
 
 
 class InvestopediaTermsCrawler(BaseCrawler):
-    model = InvestopediaDocument
+    model = InvestopediaTermsDocument
     HEADERS = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36'
     }

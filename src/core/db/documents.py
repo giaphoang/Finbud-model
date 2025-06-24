@@ -104,14 +104,6 @@ class BaseDocument(BaseModel):
 
         return cls.Settings.name
 
-class FinancialsDocument(BaseDocument):
-    company_name: str
-    form_type: str
-    content: str
-
-    class Settings:
-        name = "edgar_fillings"
-
 class EdgarFillingDocument(BaseDocument):
     source: str
     url: str
@@ -130,6 +122,7 @@ class EarningsCallTranscriptDocument(BaseDocument):
     
     class Settings:
         name = "earnings_call_transcripts"
+
         
 class YahooFinanceDocument(BaseDocument):
     source: str
@@ -141,24 +134,15 @@ class YahooFinanceDocument(BaseDocument):
         name = "yahoo"
         
 
-class BloombergDocument(BaseDocument):
+# Bloomberg, InvestopediaPersonalFiance, YahooFinance, etc.
+class FinancialNewsDocument(BaseDocument):
     source: str
     title: str
     link: str | None
     summary: str | None
-    publish_date: str | None
+    date: str | None
     class Settings:
-        name = "bloomberg"
-        
-
-class InvestopediaPersonalFinanceDocument(BaseDocument):
-    source: str
-    title: str
-    link: str | None
-    summary: str | None
-    publish_date: datetime | None
-    class Settings:
-        name = "investopedia_personal_finance"
+        name = "financial_news"
 
 # Investopedia Financial Terms Document
 
@@ -178,7 +162,7 @@ class Metadata(BaseModel):
     platform: str
     tags: Optional[List[str]] = None
 
-class InvestopediaDocument(BaseDocument):
+class InvestopediaTermsDocument(BaseDocument):
     term: str
     url: str
     definition: str

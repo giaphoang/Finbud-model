@@ -1,6 +1,6 @@
 from pathlib import Path
-
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Optional
 
 ROOT_DIR = str(Path(__file__).parent.parent.parent)
 
@@ -9,10 +9,8 @@ class AppSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=ROOT_DIR, env_file_encoding="utf-8")
 
     # MongoDB configs
-    MONGO_DATABASE_HOST: str = (
-        "mongodb+srv://giaptomhoang:mMmbProbiaB0bI3a@finbud-model.w2otx5f.mongodb.net/?retryWrites=true&w=majority&appName=Finbud-model"
-    )
-    MONGO_DATABASE_NAME: str = "twin"
+    MONGO_DATABASE_URI: str = "mongodb+srv://ducleanh2005:123Tienlen!123@ducle.wfkzpoe.mongodb.net/?retryWrites=true&w=majority&appName=ducle"
+    MONGO_DATABASE_NAME: str = "ducle"
 
     # MQ config
     RABBITMQ_DEFAULT_USERNAME: str = "guest"
@@ -21,11 +19,12 @@ class AppSettings(BaseSettings):
     RABBITMQ_PORT: int = 5673
 
     # QdrantDB config
-    QDRANT_CLOUD_URL: str = "str"
-    QDRANT_DATABASE_HOST: str = "qdrant"
+    QDRANT_DATABASE_HOST: str = "localhost"
     QDRANT_DATABASE_PORT: int = 6333
-    USE_QDRANT_CLOUD: bool = False
-    QDRANT_APIKEY: str | None = None
+    USE_QDRANT_CLOUD: bool = True
+    QDRANT_CLOUD_URL: str = "https://5b7a779e-5532-4bc2-9cad-649ad8f8d034.us-east-1-0.aws.cloud.qdrant.io"
+    QDRANT_APIKEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.pxp_du1nrHJJhAcPgFXhoQjZfsx8TLW5Blw3WhE3Qn0"
+   
 
     # OpenAI config
     OPENAI_MODEL_ID: str = "gpt-4o-mini"

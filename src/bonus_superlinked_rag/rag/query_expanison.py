@@ -4,13 +4,18 @@ from llm.chain import GeneralChain
 from llm.prompt_templates import QueryExpansionTemplate
 from config import settings
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 class QueryExpansion:
     @staticmethod
     def generate_response(query: str, to_expand_to_n: int) -> list[str]:
         query_expansion_template = QueryExpansionTemplate()
         prompt_template = query_expansion_template.create_template(to_expand_to_n)
-        model = ChatOpenAI(model=settings.OPENAI_MODEL_ID, temperature=0)
+        model = ChatOpenAI(model=os.getenv("OPENAI_MODEL_ID"), temperature=0)
 
         chain = GeneralChain().get_chain(
             llm=model, output_key="expanded_queries", template=prompt_template
