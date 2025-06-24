@@ -1,8 +1,4 @@
-import opik
-from core.config import settings
 from langchain_openai import ChatOpenAI
-from opik.integrations.langchain import OpikTracer
-from groq import Groq
 from datetime import datetime, timedelta
 from typing import Dict, Any, Optional, Tuple
 
@@ -15,8 +11,6 @@ import os
 logger = logger_utils.get_logger(__name__)
 
 class SelfQuery:
-    opik_tracer = OpikTracer(tags=["SelfQuery"])
-    
     # Date range keywords mapping
     DATE_RANGE_KEYWORDS = {
         # Recent time periods
@@ -85,7 +79,6 @@ class SelfQuery:
         return None
 
     @staticmethod
-    @opik.track(name="SelfQuery.extract_metadata")
     def extract_metadata(query: str) -> Dict[str, Any]:
         """Extract date range from query text and append to query if found."""
         try:
