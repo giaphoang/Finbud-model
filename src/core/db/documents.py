@@ -123,6 +123,17 @@ class EarningsCallTranscriptDocument(BaseDocument):
     class Settings:
         name = "earnings_call_transcripts"
 
+        
+class YahooFinanceDocument(BaseDocument):
+    source: str
+    title: str
+    link: str | None
+    summary: str | None
+    publish_date: str | None
+    class Settings:
+        name = "yahoo"
+        
+
 # Bloomberg, InvestopediaPersonalFiance, YahooFinance, etc.
 class FinancialNewsDocument(BaseDocument):
     source: str

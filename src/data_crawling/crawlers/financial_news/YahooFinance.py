@@ -1,4 +1,4 @@
-# src/data_crawling/crawlers/YahooFinance.py
+
 import time
 from bs4 import BeautifulSoup
 import requests

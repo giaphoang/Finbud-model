@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Any
 from models.base import DataModel
-from models.clean import EdgarFillingCleanedModel, EarningsCallTranscriptCleanedModel, FinancialNewsCleanedModel, InvestopediaTermsCleanedModel, MacroEconomicReportCleanedModel
-from models.raw import EdgarFillingRawModel, EarningsCallTranscriptRawModel, FinancialNewsRawModel, InvestopediaTermsRawModel, MacroEconomicReportRawModel
+from models.clean import EdgarFillingCleanedModel, EarningsCallTranscriptCleanedModel, FinancialNewsCleanedModel, InvestopediaTermsCleanedModel, MacroEconomicReportCleanedModel, YahooCleanedModel
+from models.raw import EdgarFillingRawModel, EarningsCallTranscriptRawModel, FinancialNewsRawModel, InvestopediaTermsRawModel, MacroEconomicReportRawModel, YahooRawModel
+
 from utils.cleaning import clean_text
 
 
@@ -95,4 +96,35 @@ class MacroEconomicReportCleaningHandler(CleaningDataHandler):
             date=raw_data.date,
             cleaned_content=clean_text(content_str),
             crawled_at=raw_data.crawled_at
+        )
+
+class YahooCleaningHandler(CleaningDataHandler):
+    def clean(self, data_model: YahooRawModel) -> YahooCleanedModel:
+        joined_text = (
+            "".join(data_model.content.values()) if data_model and data_model.content else None
+        )
+
+        return YahooCleanedModel(
+            entry_id=data_model.entry_id,
+            platform=data_model.platform,
+            link=data_model.link,
+            cleaned_content=clean_text(joined_text),
+            author_id=data_model.author_id,
+            type=data_model.type,
+        )
+
+        
+class InvestopediaPersonalFinanceCleaningHandler(CleaningDataHandler):
+    def clean(self, data_model: InvestopediaPersonalFinanceRawModel) -> InvestopediaPersonalFinanceCleanedModel:
+        joined_text = (
+            "".join(data_model.content.values()) if data_model and data_model.content else None
+        )
+
+        return InvestopediaPersonalFinanceCleanedModel(
+            entry_id=data_model.entry_id,
+            platform=data_model.platform,
+            link=data_model.link,
+            cleaned_content=clean_text(joined_text),
+            author_id=data_model.author_id,
+            type=data_model.type,
         )

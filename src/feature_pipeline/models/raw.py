@@ -64,3 +64,26 @@ class MacroEconomicReportRawModel(DataModel):
     type: str
     content: Content
     crawled_at: datetime = Field(default_factory=datetime.utcnow)
+    content: dict
+    author_id: str | None = None
+    image: Optional[str] = None
+
+class YahooRawModel(DataModel):
+    platform: str
+    link: str
+    content: dict
+    author_id: str
+
+
+class BloombergRawModel(DataModel):
+    platform: str
+    link: str
+    content: dict
+    author_id: str
+
+
+class InvestopediaPersonalFinanceRawModel(DataModel):
+    platform: str
+    link: str
+    content: dict
+    author_id: str

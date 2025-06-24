@@ -3,8 +3,10 @@ from abc import ABC, abstractmethod
 from typing import List, Any
 
 from models.base import DataModel
-from models.chunk import EdgarFillingChunkModel, EarningsCallTranscriptChunkModel, FinancialNewsChunkModel, InvestopediaTermsChunkModel, MacroEconomicReportChunkModel
-from models.clean import EdgarFillingCleanedModel, EarningsCallTranscriptCleanedModel, FinancialNewsCleanedModel, InvestopediaTermsCleanedModel, MacroEconomicReportCleanedModel
+
+from models.chunk import EdgarFillingChunkModel, EarningsCallTranscriptChunkModel, FinancialNewsChunkModel, YahooChunkModel, InvestopediaTermsChunkModel, MacroEconomicReportChunkModel, InvestopediaPersonalFinanceChunkModel
+from models.clean import EdgarFillingCleanedModel, EarningsCallTranscriptCleanedModel, FinancialNewsCleanedModel, YahooCleanedModel, InvestopediaTermsCleanedModel, MacroEconomicReportCleanedModel, InvestopediaPersonalFinanceCleanedModel
+
 from utils.chunking import chunk_text
 
 
@@ -60,6 +62,7 @@ class EarningsCallTranscriptChunkingHandler(ChunkingDataHandler):
             data_models_list.append(model)
         
         return data_models_list
+
 
 class FinancialNewsChunkingHandler(ChunkingDataHandler):
     def chunk(self, data_model: FinancialNewsCleanedModel) -> List[FinancialNewsChunkModel]:
@@ -123,4 +126,68 @@ class MacroEconomicReportChunkingHandler(ChunkingDataHandler):
             )
             data_models_list.append(model)
             
+        return data_models_list
+
+
+class YahooChunkingHandler(ChunkingDataHandler):
+    def chunk(self, data_model: YahooCleanedModel) -> list[YahooChunkModel]:
+        data_models_list = []
+
+        text_content = data_model.cleaned_content
+        chunks = chunk_text(text_content)
+
+        for chunk in chunks:
+            model = YahooChunkModel(
+                entry_id=data_model.entry_id,
+                platform=data_model.platform,
+                link=data_model.link,
+                chunk_id=hashlib.md5(chunk.encode()).hexdigest(),
+                chunk_content=chunk,
+                author_id=data_model.author_id,
+                type=data_model.type,
+            )
+            data_models_list.append(model)
+
+        return data_models_list
+
+class BloombergChunkingHandler(ChunkingDataHandler):
+    def chunk(self, data_model: BloombergCleanedModel) -> list[BloombergChunkModel]:
+        data_models_list = []
+
+        text_content = data_model.cleaned_content
+        chunks = chunk_text(text_content)
+
+        for chunk in chunks:
+            model = BloombergChunkModel(
+                entry_id=data_model.entry_id,
+                platform=data_model.platform,
+                link=data_model.link,
+                chunk_id=hashlib.md5(chunk.encode()).hexdigest(),
+                chunk_content=chunk,
+                author_id=data_model.author_id,
+                type=data_model.type,
+            )
+            data_models_list.append(model)
+
+        return data_models_list
+
+class InvestopediaPersonalFinanceChunkingHandler(ChunkingDataHandler):
+    def chunk(self, data_model: InvestopediaPersonalFinanceCleanedModel) -> list[InvestopediaPersonalFinanceChunkModel]:
+        data_models_list = []
+        
+        text_content = data_model.cleaned_content
+        chunks = chunk_text(text_content)
+
+        for chunk in chunks:
+            model = InvestopediaPersonalFinanceChunkModel(
+                entry_id=data_model.entry_id,
+                platform=data_model.platform,
+                link=data_model.link,
+                chunk_id=hashlib.md5(chunk.encode()).hexdigest(),
+                chunk_content=chunk,
+                author_id=data_model.author_id,
+                type=data_model.type,
+            )
+            data_models_list.append(model)
+
         return data_models_list

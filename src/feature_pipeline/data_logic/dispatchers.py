@@ -12,7 +12,9 @@ from data_logic.chunking_data_handlers import (
     EdgarFillingChunkingHandler,
     EarningsCallTranscriptChunkingHandler,
     InvestopediaTermsChunkingHandler,
-    MacroEconomicReportChunkingHandler
+    MacroEconomicReportChunkingHandler,
+    InvestopediaPersonalFinanceChunkingHandler,
+    YahooChunkingHandler
 )
 
 from data_logic.cleaning_data_handlers import (
@@ -20,7 +22,9 @@ from data_logic.cleaning_data_handlers import (
     EdgarFillingCleaningHandler,
     EarningsCallTranscriptCleaningHandler,
     InvestopediaTermsCleaningHandler,
-    MacroEconomicReportCleaningHandler
+    YahooCleaningHandler,
+    MacroEconomicReportCleaningHandler,
+    InvestopediaPersonalFinanceCleaningHandler
 )
 
 from data_logic.embedding_data_handlers import (
