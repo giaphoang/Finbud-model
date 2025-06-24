@@ -7,18 +7,25 @@ from data_logic.chunking_data_handlers import (
     ChunkingDataHandler,
     PostChunkingHandler,
     RepositoryChunkingHandler,
+    YahooChunkingHandler,
+    BloombergChunkingHandler,
+    InvestopediaPersonalFinanceChunkingHandler
 )
 from data_logic.cleaning_data_handlers import (
     ArticleCleaningHandler,
     CleaningDataHandler,
     PostCleaningHandler,
     RepositoryCleaningHandler,
+    YahooCleaningHandler,
+    BloombergCleaningHandler,
+    InvestopediaPersonalFinanceCleaningHandler
 )
 from data_logic.embedding_data_handlers import (
     ArticleEmbeddingHandler,
     EmbeddingDataHandler,
     PostEmbeddingHandler,
     RepositoryEmbeddingHandler,
+    
 )
 
 logger = get_logger(__name__)

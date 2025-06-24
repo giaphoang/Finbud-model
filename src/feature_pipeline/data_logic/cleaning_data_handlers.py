@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 from models.base import DataModel
-from models.clean import ArticleCleanedModel, PostCleanedModel, RepositoryCleanedModel
-from models.raw import ArticleRawModel, PostsRawModel, RepositoryRawModel
+from models.clean import ArticleCleanedModel, PostCleanedModel, RepositoryCleanedModel, YahooCleanedModel, BloombergCleanedModel, InvestopediaPersonalFinanceCleanedModel
+from models.raw import ArticleRawModel, PostsRawModel, RepositoryRawModel, YahooRawModel, BloombergRawModel, InvestopediaPersonalFinanceRawModel
 from utils.cleaning import clean_text
 
 
@@ -61,5 +61,51 @@ class RepositoryCleaningHandler(CleaningDataHandler):
             link=data_model.link,
             cleaned_content=clean_text(joined_text),
             owner_id=data_model.owner_id,
+            type=data_model.type,
+        )
+
+class YahooCleaningHandler(CleaningDataHandler):
+    def clean(self, data_model: YahooRawModel) -> YahooCleanedModel:
+        joined_text = (
+            "".join(data_model.content.values()) if data_model and data_model.content else None
+        )
+
+        return YahooCleanedModel(
+            entry_id=data_model.entry_id,
+            platform=data_model.platform,
+            link=data_model.link,
+            cleaned_content=clean_text(joined_text),
+            author_id=data_model.author_id,
+            type=data_model.type,
+        )
+        
+class BloombergCleaningHandler(CleaningDataHandler):
+    def clean(self, data_model: BloombergRawModel) -> BloombergCleanedModel:
+        joined_text = (
+            "".join(data_model.content.values()) if data_model and data_model.content else None
+        )
+
+        return BloombergCleanedModel(
+            entry_id=data_model.entry_id,
+            platform=data_model.platform,
+            link=data_model.link,
+            cleaned_content=clean_text(joined_text),
+            author_id=data_model.author_id,
+            type=data_model.type,
+        )
+
+        
+class InvestopediaPersonalFinanceCleaningHandler(CleaningDataHandler):
+    def clean(self, data_model: InvestopediaPersonalFinanceRawModel) -> InvestopediaPersonalFinanceCleanedModel:
+        joined_text = (
+            "".join(data_model.content.values()) if data_model and data_model.content else None
+        )
+
+        return InvestopediaPersonalFinanceCleanedModel(
+            entry_id=data_model.entry_id,
+            platform=data_model.platform,
+            link=data_model.link,
+            cleaned_content=clean_text(joined_text),
+            author_id=data_model.author_id,
             type=data_model.type,
         )
