@@ -199,4 +199,3 @@ class VectorRetriever:
 
     def set_query(self, query: str):
         self.query = query
-
