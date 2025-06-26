@@ -65,16 +65,25 @@ class VectorRetriever:
                 additional_filters=additional_filters
             )
             
-            # Search across all collections sequentially to reduce memory usage
+            # Determine which collections to search
+            if collection_type:
+                # Search only the specified collection
+                collections_to_search = [collection_type]
+                limit_per_collection = k
+            else:
+                # Search all collections
+                collections_to_search = self.COLLECTION_TYPES
+                limit_per_collection = max(1, k // len(self.COLLECTION_TYPES))
+            
+            # Search across specified collections sequentially to reduce memory usage
             all_results = []
-            for data_type in self.COLLECTION_TYPES:
+            for data_type in collections_to_search:
                 collection_name = self._get_vector_collection_name(data_type)
                 try:
                     results = self._client.search(
                         collection_name=collection_name,
                         query_vector=query_vector,
-                        query_filter=search_filter,
-                        limit=k // len(self.COLLECTION_TYPES)
+                        limit=limit_per_collection
                     )
                     all_results.extend(results)
                     # Clear results after extending to free memory
@@ -111,14 +120,14 @@ class VectorRetriever:
                 )
             )
         
-        if additional_filters:
-            for key, value in additional_filters.items():
-                must_conditions.append(
-                    models.FieldCondition(
-                        key=key,
-                        match=models.MatchValue(value=value)
-                    )
-                )
+        # if additional_filters:
+        #     for key, value in additional_filters.items():
+        #         must_conditions.append(
+        #             models.FieldCondition(
+        #                 key=key,
+        #                 match=models.MatchValue(value=value)
+        #             )
+        #         )
         
         return models.Filter(must=must_conditions) if must_conditions else None
 
